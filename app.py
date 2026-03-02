@@ -85,22 +85,25 @@ st.markdown("### Diagnostic Control Panel")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    if st.button("Analyze Startup Processes", use_container_width=True):
+    if st.button("Analyze Startup Processes", help="Queries WMI to list programs that run when Windows starts.", use_container_width=True):
         st.session_state["diagnostic_output"] = "Analyzing startup processes...\n\n"
-        result = run_powershell_script('get_startup_processes.ps1')
+        with st.spinner("Analyzing startup processes..."):
+            result = run_powershell_script('get_startup_processes.ps1')
         st.session_state["diagnostic_output"] += result
 
 with col2:
-    if st.button("Check Network & Reset DNS", use_container_width=True):
+    if st.button("Check Network & Reset DNS", help="Lists network adapters and flushes the DNS resolver cache.", use_container_width=True):
         st.session_state["diagnostic_output"] = "Checking network adapters and resetting DNS cache...\n\n"
-        result1 = run_powershell_script('get_network_adapters.ps1')
-        result2 = run_powershell_script('reset_dns_cache.ps1')
+        with st.spinner("Checking network & resetting DNS..."):
+            result1 = run_powershell_script('get_network_adapters.ps1')
+            result2 = run_powershell_script('reset_dns_cache.ps1')
         st.session_state["diagnostic_output"] += f"--- Network Check ---\n{result1}\n\n--- DNS Reset ---\n{result2}"
 
 with col3:
-    if st.button("Scan Critical Events", use_container_width=True):
+    if st.button("Scan Critical Events", help="Scans Windows Event Logs for recent critical system errors.", use_container_width=True):
         st.session_state["diagnostic_output"] = "Scanning recent critical events...\n\n"
-        result = run_powershell_script('get_critical_events.ps1')
+        with st.spinner("Scanning critical events..."):
+            result = run_powershell_script('get_critical_events.ps1')
         st.session_state["diagnostic_output"] += result
 
 # --- Output Area ---
