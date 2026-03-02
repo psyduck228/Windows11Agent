@@ -18,9 +18,17 @@ if api_key and api_key != "your_google_api_key_here":
 SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ps_scripts')
 
 def run_powershell_script(script_name):
-    script_path = os.path.join(SCRIPTS_DIR, script_name)
+    # 🛡️ Sentinel: Prevent Path Traversal (LFI/RCE)
+    script_path = os.path.abspath(os.path.join(SCRIPTS_DIR, script_name))
+    # Add trailing slash to SCRIPTS_DIR to prevent sibling directory attacks
+    base_dir = os.path.abspath(SCRIPTS_DIR)
+    if not base_dir.endswith(os.sep):
+        base_dir += os.sep
+    if not script_path.startswith(base_dir):
+        return "Error: Invalid script path requested."
+
     if not os.path.exists(script_path):
-        return f"Error: Script not found at {script_path}"
+        return "Error: Script not found."
     
     try:
         # Define the arguments for powershell execution
@@ -36,7 +44,8 @@ def run_powershell_script(script_name):
         return output if output.strip() else "Command executed with no output."
     
     except Exception as e:
-        return f"Execution Failed: {str(e)}"
+        # 🛡️ Sentinel: Return a generic error to prevent exposing system details
+        return "Execution Failed: An unexpected error occurred while executing the diagnostic script."
 
 # --- Streamlit App Initialization ---
 st.set_page_config(page_title="Windows 11 Diagnostic AI Agent", layout="wide")
@@ -170,7 +179,9 @@ if prompt := st.chat_input("Ask a follow-up question..."):
                 st.session_state.messages.append({"role": "assistant", "content": full_response})
                 
             except Exception as e:
-                error_msg = f"Error generating response: {str(e)}"
+                # 🛡️ Sentinel: Do not leak detailed error strings to the UI.
+                # In a real app we would log str(e) securely here.
+                error_msg = "An unexpected error occurred while generating the response. Please try again later."
                 st.error(error_msg)
                 st.session_state.messages.append({"role": "assistant", "content": error_msg})
 

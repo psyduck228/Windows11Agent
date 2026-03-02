@@ -1,0 +1,4 @@
+## 2024-03-02 - Path Traversal Vulnerability in PowerShell Script Runner
+**Vulnerability:** The `run_powershell_script` function in `app.py` constructs a file path by joining the script directory with a user-provided (or currently hardcoded) script name using `os.path.join`. However, it doesn't validate if the resolved path actually stays within the intended `ps_scripts` directory.
+**Learning:** `os.path.join` on Windows/Linux will accept absolute paths or traversals like `../../` for the second argument, allowing an attacker to specify *any* file on the system to be executed via PowerShell.
+**Prevention:** Always use `os.path.abspath` to resolve the final path and verify that it starts with the intended safe directory (e.g., `os.path.abspath(path).startswith(safe_dir)`) before executing or reading files.
