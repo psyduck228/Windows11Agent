@@ -8,7 +8,7 @@ An autonomous diagnostic assistant built with Streamlit and powered by Google's 
   - **Check Network & Reset DNS**: List network adapters and resolve DNS caching issues.
   - **Scan Critical Events**: Quickly review recent critical system errors from the Windows Event Logs.
 - **AI Chat Assistant**: Ask questions directly in the app. The AI is specifically instructed to analyze the most recent diagnostic output to provide tailored expert IT advice.
-- **Model Selector**: Choose between multiple Gemini models (e.g., `gemini-2.5-flash`, `gemini-1.5-pro`).
+- **Model Selector**: Uses `litellm` and `google.generativeai` to dynamically fetch and choose between all available Gemini models (e.g., `gemini-2.5-pro`, `gemini-1.5-flash`), as well as local Ollama models like `deepseek-r1`.
 - **Real-Time Streaming**: AI responses stream directly to the chat interface, providing an intuitive "typing" experience.
 
 ## Prerequisites
@@ -23,7 +23,7 @@ An autonomous diagnostic assistant built with Streamlit and powered by Google's 
    ```
 2. Install the required Python packages:
    ```bash
-   pip install streamlit google-generativeai python-dotenv
+   pip install streamlit litellm google-generativeai python-dotenv
    ```
 3. Set up your environment variables:
    - Create a file named `.env` in the root directory (or modify the existing one).

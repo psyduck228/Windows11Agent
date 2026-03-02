@@ -2,13 +2,18 @@ import streamlit as st
 import subprocess
 import os
 import google.generativeai as genai
+from litellm import completion
 from dotenv import load_dotenv
 
 # Load API keys from .env
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
-if api_key:
-    genai.configure(api_key=api_key)
+
+if api_key and api_key != "your_google_api_key_here":
+    try:
+        genai.configure(api_key=api_key)
+    except Exception:
+        pass
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ps_scripts')
 
@@ -45,17 +50,33 @@ if "messages" not in st.session_state:
 # --- Sidebar ---
 with st.sidebar:
     st.markdown("### AI Configuration")
+    
+    available_models = ["ollama/deepseek-r1"]
+    default_gemini = ["gemini/gemini-1.5-flash", "gemini/gemini-2.5-flash", "gemini/gemini-2.5-pro"]
+    
     if not api_key or api_key == "your_google_api_key_here":
-        st.error("⚠️ GOOGLE_API_KEY missing or invalid in .env file.")
+        st.warning("⚠️ GOOGLE_API_KEY missing. Gemini models will not work.")
+        available_models = default_gemini + available_models
     else:
         st.success("✅ Google API Key loaded.")
+        try:
+            gemini_models = [
+                f"gemini/{m.name.split('models/')[1]}" 
+                for m in genai.list_models() 
+                if 'generateContent' in getattr(m, 'supported_generation_methods', [])
+            ]
+            if gemini_models:
+                available_models = gemini_models + available_models
+            else:
+                available_models = default_gemini + available_models
+        except Exception:
+            available_models = default_gemini + available_models
     
     selected_model = st.selectbox(
-        "Select Gemini Model",
-        ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-1.5-pro", "gemini-1.5-flash"],
+        "Select Model",
+        available_models,
         index=0
     )
-
 # --- Header ---
 st.title("Windows 11 Diagnostic AI Agent")
 st.markdown("### Diagnostic Control Panel")
@@ -109,12 +130,6 @@ if prompt := st.chat_input("Ask a follow-up question..."):
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Convert chat history to Gemini format, omitting the first diagnostic context if we reinject it
-    gemini_history = []
-    for msg in st.session_state.messages[:-1]: # exclude the prompt we just added
-        role = "user" if msg["role"] == "user" else "model"
-        gemini_history.append({"role": role, "parts": [msg["content"]]})
-
     # Add diagnostic output as context to the system prompt/latest message
     system_instruction = """
     You are an expert Windows IT support agent. 
@@ -123,26 +138,34 @@ if prompt := st.chat_input("Ask a follow-up question..."):
     """
     if st.session_state["diagnostic_output"]:
         system_instruction += "\n\n### CURRENT DIAGNOSTIC OUTPUT ###\n" + st.session_state["diagnostic_output"]
+
+    # Convert chat history to OpenAI format for litellm
+    messages_for_llm = [{"role": "system", "content": system_instruction}]
+    for msg in st.session_state.messages:
+        messages_for_llm.append({"role": msg["role"], "content": msg["content"]})
     
     with st.chat_message("assistant"):
-        if not api_key or api_key == "your_google_api_key_here":
-             error_msg = "Please configure your `GOOGLE_API_KEY` in the `.env` file to use the AI chat."
+        if selected_model.startswith("gemini") and (not api_key or api_key == "your_google_api_key_here"):
+             error_msg = "Please configure your `GOOGLE_API_KEY` in the `.env` file to use Gemini models."
              st.error(error_msg)
              st.session_state.messages.append({"role": "assistant", "content": error_msg})
         else:
             try:
-                # Initialize model with system instruction
-                model = genai.GenerativeModel(
-                    model_name=selected_model,
-                    system_instruction=system_instruction
+                # Call litellm completion
+                response = completion(
+                    model=selected_model,
+                    messages=messages_for_llm,
+                    stream=True
                 )
                 
-                # Start chat session with history
-                chat = model.start_chat(history=gemini_history)
-                
                 # Stream the response
-                response = chat.send_message(prompt, stream=True)
-                full_response = st.write_stream(chunk.text for chunk in response)
+                def generate():
+                    for chunk in response:
+                        content = chunk.choices[0].delta.content
+                        if content:
+                            yield content
+                            
+                full_response = st.write_stream(generate())
                 
                 st.session_state.messages.append({"role": "assistant", "content": full_response})
                 
