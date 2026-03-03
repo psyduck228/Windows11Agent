@@ -54,7 +54,9 @@ if "diagnostic_output" not in st.session_state:
     st.session_state["diagnostic_output"] = ""
 
 if "messages" not in st.session_state:
-    st.session_state["messages"] = []
+    st.session_state["messages"] = [
+        {"role": "assistant", "content": "Hello! I am your Windows 11 Diagnostic AI Agent. Run a diagnostic tool above and then ask me any questions about the results!"}
+    ]
 
 # --- Sidebar ---
 with st.sidebar:
@@ -134,7 +136,8 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # Chat input
-if prompt := st.chat_input("Ask a follow-up question..."):
+chat_placeholder = "Ask a question about the diagnostic results..." if st.session_state.get("diagnostic_output") else "Run a diagnostic tool above first..."
+if prompt := st.chat_input(chat_placeholder):
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     
