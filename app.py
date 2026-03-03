@@ -35,7 +35,8 @@ def run_powershell_script(script_name):
         args = ["powershell", "-ExecutionPolicy", "Bypass", "-NoProfile", "-File", script_path]
         
         # Execute the process
-        result = subprocess.run(args, capture_output=True, text=True, check=False)
+        # 🛡️ Sentinel: Add timeout to prevent long-running scripts from blocking the Streamlit thread
+        result = subprocess.run(args, capture_output=True, text=True, check=False, timeout=30)
         
         output = result.stdout
         if result.stderr:
@@ -43,6 +44,9 @@ def run_powershell_script(script_name):
             
         return output if output.strip() else "Command executed with no output."
     
+    except subprocess.TimeoutExpired:
+        # 🛡️ Sentinel: Fail securely on timeout without leaking system state
+        return "Execution Failed: The diagnostic script timed out after 30 seconds."
     except Exception as e:
         # 🛡️ Sentinel: Return a generic error to prevent exposing system details
         return "Execution Failed: An unexpected error occurred while executing the diagnostic script."
@@ -134,7 +138,8 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # Chat input
-if prompt := st.chat_input("Ask a follow-up question..."):
+# 🛡️ Sentinel: Enforce max input length to prevent potential resource exhaustion / DoS
+if prompt := st.chat_input("Ask a follow-up question...", max_chars=2000):
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     
