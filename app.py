@@ -1,6 +1,6 @@
-import streamlit as st
-import subprocess
 import os
+import subprocess
+import streamlit as st
 import google.generativeai as genai
 from litellm import completion
 from dotenv import load_dotenv
@@ -12,7 +12,7 @@ api_key = os.getenv("GOOGLE_API_KEY")
 if api_key and api_key != "your_google_api_key_here":
     try:
         genai.configure(api_key=api_key)
-    except Exception:
+    except (ValueError, TypeError):
         pass
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ps_scripts')
@@ -36,18 +36,18 @@ def run_powershell_script(script_name):
         
         # Execute the process
         # 🛡️ Sentinel: Add timeout to prevent long-running scripts from blocking the Streamlit thread
-        result = subprocess.run(args, capture_output=True, text=True, check=False, timeout=30)
+        powershell_result = subprocess.run(args, capture_output=True, text=True, check=False, timeout=30)
         
-        output = result.stdout
-        if result.stderr:
-            output += f"\n[Errors/Warnings]:\n{result.stderr}"
+        output = powershell_result.stdout
+        if powershell_result.stderr:
+            output += f"\n[Errors/Warnings]:\n{powershell_result.stderr}"
             
         return output if output.strip() else "Command executed with no output."
     
     except subprocess.TimeoutExpired:
         # 🛡️ Sentinel: Fail securely on timeout without leaking system state
         return "Execution Failed: The diagnostic script timed out after 30 seconds."
-    except Exception as e:
+    except (OSError, ValueError):
         # 🛡️ Sentinel: Return a generic error to prevent exposing system details
         return "Execution Failed: An unexpected error occurred while executing the diagnostic script."
 
@@ -84,7 +84,7 @@ with st.sidebar:
                 available_models = gemini_models + available_models
             else:
                 available_models = default_gemini + available_models
-        except Exception:
+        except (ValueError, RuntimeError):
             available_models = default_gemini + available_models
     
     selected_model = st.selectbox(
@@ -124,10 +124,10 @@ with col3:
 # --- Output Area ---
 st.markdown("#### Diagnostic Output")
 with st.container(height=300):
-   if st.session_state["diagnostic_output"]:
-       st.code(st.session_state["diagnostic_output"], language="powershell")
-   else:
-       st.info("Run a diagnostic tool above to view output.")
+    if st.session_state["diagnostic_output"]:
+        st.code(st.session_state["diagnostic_output"], language="powershell")
+    else:
+        st.info("Run a diagnostic tool above to view output.")
 
 st.divider()
 
@@ -166,9 +166,9 @@ if prompt := st.chat_input(chat_placeholder, max_chars=2000):
     
     with st.chat_message("assistant"):
         if selected_model.startswith("gemini") and (not api_key or api_key == "your_google_api_key_here"):
-             error_msg = "Please configure your `GOOGLE_API_KEY` in the `.env` file to use Gemini models."
-             st.error(error_msg)
-             st.session_state.messages.append({"role": "assistant", "content": error_msg})
+            error_msg = "Please configure your `GOOGLE_API_KEY` in the `.env` file to use Gemini models."
+            st.error(error_msg)
+            st.session_state.messages.append({"role": "assistant", "content": error_msg})
         else:
             try:
                 # Call litellm completion
@@ -189,7 +189,7 @@ if prompt := st.chat_input(chat_placeholder, max_chars=2000):
                 
                 st.session_state.messages.append({"role": "assistant", "content": full_response})
                 
-            except Exception as e:
+            except RuntimeError:
                 # 🛡️ Sentinel: Do not leak detailed error strings to the UI.
                 # In a real app we would log str(e) securely here.
                 error_msg = "An unexpected error occurred while generating the response. Please try again later."
