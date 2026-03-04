@@ -113,7 +113,8 @@ with st.sidebar:
                 available_models = gemini_models + available_models
             else:
                 available_models = default_gemini + available_models
-        except (ValueError, RuntimeError):
+        except Exception:
+            # 🛡️ Sentinel: Catch all exceptions to prevent leaking API errors/stack traces
             available_models = default_gemini + available_models
 
     selected_model = st.selectbox("Select Model", available_models, index=0)
@@ -228,8 +229,9 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000):
         else:
             try:
                 # Call litellm completion
+                # 🛡️ Sentinel: Add timeout to prevent API hangs from blocking Streamlit threads
                 response = completion(
-                    model=selected_model, messages=messages_for_llm, stream=True
+                    model=selected_model, messages=messages_for_llm, stream=True, timeout=30
                 )
 
                 # Stream the response
@@ -246,8 +248,8 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000):
                     {"role": "assistant", "content": full_response}
                 )
 
-            except RuntimeError:
-                # 🛡️ Sentinel: Do not leak detailed error strings to the UI.
+            except Exception:
+                # 🛡️ Sentinel: Catch all exceptions (Timeout, APIError) to avoid leaking stack traces to the UI.
                 # In a real app we would log str(e) securely here.
                 ERROR_MSG = (
                     "An unexpected error occurred while generating the "
