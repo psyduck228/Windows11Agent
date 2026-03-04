@@ -15,7 +15,8 @@ if api_key and api_key != "your_google_api_key_here":
     except (ValueError, TypeError):
         pass
 
-SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ps_scripts')
+SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ps_scripts")
+
 
 def run_powershell_script(script_name):
     # 🛡️ Sentinel: Prevent Path Traversal (LFI/RCE)
@@ -29,27 +30,37 @@ def run_powershell_script(script_name):
 
     if not os.path.exists(script_path):
         return "Error: Script not found."
-    
+
     try:
         # Define the arguments for powershell execution
-        args = ["powershell", "-ExecutionPolicy", "Bypass", "-NoProfile", "-File", script_path]
-        
+        args = [
+            "powershell",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-NoProfile",
+            "-File",
+            script_path,
+        ]
+
         # Execute the process
         # 🛡️ Sentinel: Add timeout to prevent long-running scripts from blocking the Streamlit thread
-        powershell_result = subprocess.run(args, capture_output=True, text=True, check=False, timeout=30)
-        
+        powershell_result = subprocess.run(
+            args, capture_output=True, text=True, check=False, timeout=30
+        )
+
         output = powershell_result.stdout
         if powershell_result.stderr:
             output += f"\n[Errors/Warnings]:\n{powershell_result.stderr}"
-            
+
         return output if output.strip() else "Command executed with no output."
-    
+
     except subprocess.TimeoutExpired:
         # 🛡️ Sentinel: Fail securely on timeout without leaking system state
         return "Execution Failed: The diagnostic script timed out after 30 seconds."
     except (OSError, ValueError):
         # 🛡️ Sentinel: Return a generic error to prevent exposing system details
         return "Execution Failed: An unexpected error occurred while executing the diagnostic script."
+
 
 # --- Streamlit App Initialization ---
 st.set_page_config(page_title="Windows 11 Diagnostic AI Agent", layout="wide")
@@ -59,16 +70,23 @@ if "diagnostic_output" not in st.session_state:
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [
-        {"role": "assistant", "content": "Hello! I am your Windows 11 Diagnostic AI Agent. Run a diagnostic tool above and then ask me any questions about the results!"}
+        {
+            "role": "assistant",
+            "content": "Hello! I am your Windows 11 Diagnostic AI Agent. Run a diagnostic tool above and then ask me any questions about the results!",
+        }
     ]
 
 # --- Sidebar ---
 with st.sidebar:
     st.markdown("### AI Configuration")
-    
+
     available_models = ["ollama/deepseek-r1"]
-    default_gemini = ["gemini/gemini-1.5-flash", "gemini/gemini-2.5-flash", "gemini/gemini-2.5-pro"]
-    
+    default_gemini = [
+        "gemini/gemini-1.5-flash",
+        "gemini/gemini-2.5-flash",
+        "gemini/gemini-2.5-pro",
+    ]
+
     if not api_key or api_key == "your_google_api_key_here":
         st.warning("⚠️ GOOGLE_API_KEY missing. Gemini models will not work.")
         available_models = default_gemini + available_models
@@ -76,9 +94,9 @@ with st.sidebar:
         st.success("✅ Google API Key loaded.")
         try:
             gemini_models = [
-                f"gemini/{m.name.split('models/')[1]}" 
-                for m in genai.list_models() 
-                if 'generateContent' in getattr(m, 'supported_generation_methods', [])
+                f"gemini/{m.name.split('models/')[1]}"
+                for m in genai.list_models()
+                if "generateContent" in getattr(m, "supported_generation_methods", [])
             ]
             if gemini_models:
                 available_models = gemini_models + available_models
@@ -86,12 +104,8 @@ with st.sidebar:
                 available_models = default_gemini + available_models
         except (ValueError, RuntimeError):
             available_models = default_gemini + available_models
-    
-    selected_model = st.selectbox(
-        "Select Model",
-        available_models,
-        index=0
-    )
+
+    selected_model = st.selectbox("Select Model", available_models, index=0)
 # --- Header ---
 st.title("Windows 11 Diagnostic AI Agent")
 st.markdown("### Diagnostic Control Panel")
@@ -100,25 +114,41 @@ st.markdown("### Diagnostic Control Panel")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    if st.button("Analyze Startup Processes", help="Queries WMI to list programs that run when Windows starts.", use_container_width=True):
+    if st.button(
+        "Analyze Startup Processes",
+        help="Queries WMI to list programs that run when Windows starts.",
+        use_container_width=True,
+    ):
         st.session_state["diagnostic_output"] = "Analyzing startup processes...\n\n"
         with st.spinner("Analyzing startup processes..."):
-            result = run_powershell_script('get_startup_processes.ps1')
+            result = run_powershell_script("get_startup_processes.ps1")
         st.session_state["diagnostic_output"] += result
 
 with col2:
-    if st.button("Check Network & Reset DNS", help="Lists network adapters and flushes the DNS resolver cache.", use_container_width=True):
-        st.session_state["diagnostic_output"] = "Checking network adapters and resetting DNS cache...\n\n"
+    if st.button(
+        "Check Network & Reset DNS",
+        help="Lists network adapters and flushes the DNS resolver cache.",
+        use_container_width=True,
+    ):
+        st.session_state["diagnostic_output"] = (
+            "Checking network adapters and resetting DNS cache...\n\n"
+        )
         with st.spinner("Checking network & resetting DNS..."):
-            result1 = run_powershell_script('get_network_adapters.ps1')
-            result2 = run_powershell_script('reset_dns_cache.ps1')
-        st.session_state["diagnostic_output"] += f"--- Network Check ---\n{result1}\n\n--- DNS Reset ---\n{result2}"
+            result1 = run_powershell_script("get_network_adapters.ps1")
+            result2 = run_powershell_script("reset_dns_cache.ps1")
+        st.session_state[
+            "diagnostic_output"
+        ] += f"--- Network Check ---\n{result1}\n\n--- DNS Reset ---\n{result2}"
 
 with col3:
-    if st.button("Scan Critical Events", help="Scans Windows Event Logs for recent critical system errors.", use_container_width=True):
+    if st.button(
+        "Scan Critical Events",
+        help="Scans Windows Event Logs for recent critical system errors.",
+        use_container_width=True,
+    ):
         st.session_state["diagnostic_output"] = "Scanning recent critical events...\n\n"
         with st.spinner("Scanning critical events..."):
-            result = run_powershell_script('get_critical_events.ps1')
+            result = run_powershell_script("get_critical_events.ps1")
         st.session_state["diagnostic_output"] += result
 
 # --- Output Area ---
@@ -141,58 +171,70 @@ for message in st.session_state.messages:
 
 # Chat input
 # 🛡️ Sentinel: Enforce max input length to prevent potential resource exhaustion / DoS
-chat_placeholder = "Ask a question about the diagnostic results..." if st.session_state.get("diagnostic_output") else "Run a diagnostic tool above first..."
+chat_placeholder = (
+    "Ask a question about the diagnostic results..."
+    if st.session_state.get("diagnostic_output")
+    else "Run a diagnostic tool above first..."
+)
 if prompt := st.chat_input(chat_placeholder, max_chars=2000):
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
-    
+
     # Display user message in chat message container
     with st.chat_message("user"):
         st.markdown(prompt)
 
     # Add diagnostic output as context to the system prompt/latest message
     system_instruction = """
-    You are an expert Windows IT support agent. 
+    You are an expert Windows IT support agent.
     Your strict mandate is to answer the user's questions based ONLY on the provided system diagnostic results (e.g., WMI queries, Event Logs).
     If the user asks a question that cannot be answered using the provided diagnostic data, politely refuse to answer and instruct them to run the appropriate diagnostic tool first.
     """
     if st.session_state["diagnostic_output"]:
-        system_instruction += "\n\n### CURRENT DIAGNOSTIC OUTPUT ###\n" + st.session_state["diagnostic_output"]
+        system_instruction += (
+            "\n\n### CURRENT DIAGNOSTIC OUTPUT ###\n"
+            + st.session_state["diagnostic_output"]
+        )
 
     # Convert chat history to OpenAI format for litellm
     messages_for_llm = [{"role": "system", "content": system_instruction}]
     for msg in st.session_state.messages:
         messages_for_llm.append({"role": msg["role"], "content": msg["content"]})
-    
+
     with st.chat_message("assistant"):
-        if selected_model.startswith("gemini") and (not api_key or api_key == "your_google_api_key_here"):
+        if selected_model.startswith("gemini") and (
+            not api_key or api_key == "your_google_api_key_here"
+        ):
             error_msg = "Please configure your `GOOGLE_API_KEY` in the `.env` file to use Gemini models."
             st.error(error_msg)
-            st.session_state.messages.append({"role": "assistant", "content": error_msg})
+            st.session_state.messages.append(
+                {"role": "assistant", "content": error_msg}
+            )
         else:
             try:
                 # Call litellm completion
                 response = completion(
-                    model=selected_model,
-                    messages=messages_for_llm,
-                    stream=True
+                    model=selected_model, messages=messages_for_llm, stream=True
                 )
-                
+
                 # Stream the response
                 def generate():
                     for chunk in response:
                         content = chunk.choices[0].delta.content
                         if content:
                             yield content
-                            
+
                 full_response = st.write_stream(generate())
-                
-                st.session_state.messages.append({"role": "assistant", "content": full_response})
-                
+
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": full_response}
+                )
+
             except RuntimeError:
                 # 🛡️ Sentinel: Do not leak detailed error strings to the UI.
                 # In a real app we would log str(e) securely here.
                 error_msg = "An unexpected error occurred while generating the response. Please try again later."
                 st.error(error_msg)
-                st.session_state.messages.append({"role": "assistant", "content": error_msg})
-
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": error_msg}
+                )
