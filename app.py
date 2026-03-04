@@ -188,7 +188,8 @@ CHAT_PLACEHOLDER = (
     if st.session_state.get("diagnostic_output")
     else "Run a diagnostic tool above first..."
 )
-if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000):
+CHAT_DISABLED = not bool(st.session_state.get("diagnostic_output"))
+if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISABLED):
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
 
