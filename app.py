@@ -2,10 +2,10 @@
 
 import os
 import subprocess
-import streamlit as st
-import google.generativeai as genai
-from litellm import completion
-from dotenv import load_dotenv
+import streamlit as st  # type: ignore
+import google.generativeai as genai  # type: ignore
+from litellm import completion  # type: ignore
+from dotenv import load_dotenv  # type: ignore
 
 # Load API keys from .env
 load_dotenv()
@@ -105,7 +105,7 @@ with st.sidebar:
         st.success("✅ Google API Key loaded.")
         try:
             gemini_models = [
-                f"gemini/{m.name.split('models/')[1]}"
+                f"gemini/{m.name.split('models/')[1]}"  # type: ignore
                 for m in genai.list_models()  # type: ignore
                 if "generateContent" in getattr(m, "supported_generation_methods", [])
             ]
