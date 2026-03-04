@@ -1,3 +1,5 @@
+"""Windows 11 Diagnostic AI Agent Streamlit App."""
+
 import os
 import subprocess
 import streamlit as st
@@ -11,14 +13,15 @@ api_key = os.getenv("GOOGLE_API_KEY")
 
 if api_key and api_key != "your_google_api_key_here":
     try:
-        genai.configure(api_key=api_key)
+        genai.configure(api_key=api_key)  # type: ignore
     except (ValueError, TypeError):
         pass
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ps_scripts")
 
 
-def run_powershell_script(script_name):
+def run_powershell_script(script_name: str) -> str:
+    """Executes a PowerShell script and returns the output."""
     # 🛡️ Sentinel: Prevent Path Traversal (LFI/RCE)
     script_path = os.path.abspath(os.path.join(SCRIPTS_DIR, script_name))
     # Add trailing slash to SCRIPTS_DIR to prevent sibling directory attacks
@@ -43,7 +46,8 @@ def run_powershell_script(script_name):
         ]
 
         # Execute the process
-        # 🛡️ Sentinel: Add timeout to prevent long-running scripts from blocking the Streamlit thread
+        # 🛡️ Sentinel: Add timeout to prevent long-running scripts
+        # from blocking the Streamlit thread
         powershell_result = subprocess.run(
             args, capture_output=True, text=True, check=False, timeout=30
         )
@@ -59,7 +63,10 @@ def run_powershell_script(script_name):
         return "Execution Failed: The diagnostic script timed out after 30 seconds."
     except (OSError, ValueError):
         # 🛡️ Sentinel: Return a generic error to prevent exposing system details
-        return "Execution Failed: An unexpected error occurred while executing the diagnostic script."
+        return (
+            "Execution Failed: An unexpected error occurred "
+            "while executing the diagnostic script."
+        )
 
 
 # --- Streamlit App Initialization ---
@@ -72,7 +79,11 @@ if "messages" not in st.session_state:
     st.session_state["messages"] = [
         {
             "role": "assistant",
-            "content": "Hello! I am your Windows 11 Diagnostic AI Agent. Run a diagnostic tool above and then ask me any questions about the results!",
+            "content": (
+                "Hello! I am your Windows 11 Diagnostic AI Agent. "
+                "Run a diagnostic tool above and then ask me any questions "
+                "about the results!"
+            ),
         }
     ]
 
@@ -95,7 +106,7 @@ with st.sidebar:
         try:
             gemini_models = [
                 f"gemini/{m.name.split('models/')[1]}"
-                for m in genai.list_models()
+                for m in genai.list_models()  # type: ignore
                 if "generateContent" in getattr(m, "supported_generation_methods", [])
             ]
             if gemini_models:
@@ -171,12 +182,13 @@ for message in st.session_state.messages:
 
 # Chat input
 # 🛡️ Sentinel: Enforce max input length to prevent potential resource exhaustion / DoS
-chat_placeholder = (
+# 🛡️ Sentinel: Enforce max input length to prevent potential resource exhaustion / DoS
+CHAT_PLACEHOLDER = (
     "Ask a question about the diagnostic results..."
     if st.session_state.get("diagnostic_output")
     else "Run a diagnostic tool above first..."
 )
-if prompt := st.chat_input(chat_placeholder, max_chars=2000):
+if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000):
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
 
@@ -205,10 +217,13 @@ if prompt := st.chat_input(chat_placeholder, max_chars=2000):
         if selected_model.startswith("gemini") and (
             not api_key or api_key == "your_google_api_key_here"
         ):
-            error_msg = "Please configure your `GOOGLE_API_KEY` in the `.env` file to use Gemini models."
-            st.error(error_msg)
+            ERROR_MSG = (
+                "Please configure your `GOOGLE_API_KEY` in the "
+                "`.env` file to use Gemini models."
+            )
+            st.error(ERROR_MSG)
             st.session_state.messages.append(
-                {"role": "assistant", "content": error_msg}
+                {"role": "assistant", "content": ERROR_MSG}
             )
         else:
             try:
@@ -219,8 +234,9 @@ if prompt := st.chat_input(chat_placeholder, max_chars=2000):
 
                 # Stream the response
                 def generate():
+                    """Yields chunks of the stream response."""
                     for chunk in response:
-                        content = chunk.choices[0].delta.content
+                        content = chunk.choices[0].delta.content  # type: ignore
                         if content:
                             yield content
 
@@ -233,8 +249,11 @@ if prompt := st.chat_input(chat_placeholder, max_chars=2000):
             except RuntimeError:
                 # 🛡️ Sentinel: Do not leak detailed error strings to the UI.
                 # In a real app we would log str(e) securely here.
-                error_msg = "An unexpected error occurred while generating the response. Please try again later."
-                st.error(error_msg)
+                ERROR_MSG = (
+                    "An unexpected error occurred while generating the "
+                    "response. Please try again later."
+                )
+                st.error(ERROR_MSG)
                 st.session_state.messages.append(
-                    {"role": "assistant", "content": error_msg}
+                    {"role": "assistant", "content": ERROR_MSG}
                 )
