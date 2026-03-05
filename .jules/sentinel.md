@@ -7,3 +7,8 @@
 **Vulnerability:** The `subprocess.run` call in `run_powershell_script` lacked a `timeout` argument. Since Streamlit runs synchronously on a fixed thread pool, a hanging PowerShell script could block a worker thread indefinitely, leading to resource exhaustion and Denial of Service (DoS).
 **Learning:** External blocking calls (like shell scripts or remote APIs) must always have a strict timeout in synchronous web frameworks like Streamlit to prevent thread starvation.
 **Prevention:** Always include a `timeout` parameter in `subprocess.run` (e.g., `timeout=30`) and handle `subprocess.TimeoutExpired` to recover securely.
+
+## 2024-03-04 - Leaked Stack Traces and Thread Starvation from External API Calls
+**Vulnerability:** The application was not using a broad `except Exception:` block around calls to remote APIs (like `genai.list_models()` and `litellm.completion()`), allowing unexpected network or API-related exceptions to bubble up and potentially expose sensitive stack traces to the Streamlit UI. Additionally, the LLM completion API call lacked a strict timeout, which could cause thread starvation if the API hangs.
+**Learning:** Any interactions with external systems must use strict timeout boundaries and robust, catch-all exception handling (`except Exception:`) in synchronous UI frameworks to both prevent DoS and ensure secure, non-leaking error fallback mechanisms.
+**Prevention:** Ensure that every remote API call has an explicit `timeout` defined and is wrapped in a generic `try-except Exception` block that securely handles the error without exposing raw error strings to the UI.
