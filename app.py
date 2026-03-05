@@ -6,6 +6,17 @@ import streamlit as st  # type: ignore
 import google.generativeai as genai  # type: ignore
 from litellm import completion  # type: ignore
 from dotenv import load_dotenv  # type: ignore
+import logging
+
+# 🛡️ Sentinel: Configure secure audit logging for sensitive operations
+audit_logger = logging.getLogger("security_audit")
+audit_logger.setLevel(logging.INFO)
+if not audit_logger.handlers:
+    fh = logging.FileHandler("security_audit.log")
+    fh.setFormatter(
+        logging.Formatter("%(asctime)s - %(levelname)s - SECURITY AUDIT - %(message)s")
+    )
+    audit_logger.addHandler(fh)
 
 # Load API keys from .env
 load_dotenv()
@@ -22,6 +33,8 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ps_scrip
 
 def run_powershell_script(script_name: str) -> str:
     """Executes a PowerShell script and returns the output."""
+    audit_logger.info(f"Diagnostic script execution requested: {script_name}")
+
     # 🛡️ Sentinel: Prevent Path Traversal (LFI/RCE)
     script_path = os.path.abspath(os.path.join(SCRIPTS_DIR, script_name))
     # Add trailing slash to SCRIPTS_DIR to prevent sibling directory attacks
@@ -29,9 +42,13 @@ def run_powershell_script(script_name: str) -> str:
     if not base_dir.endswith(os.sep):
         base_dir += os.sep
     if not script_path.startswith(base_dir):
+        audit_logger.warning(
+            f"Path traversal attempt blocked for script: {script_name}"
+        )
         return "Error: Invalid script path requested."
 
     if not os.path.exists(script_path):
+        audit_logger.warning(f"Requested script not found: {script_name}")
         return "Error: Script not found."
 
     try:
@@ -56,13 +73,16 @@ def run_powershell_script(script_name: str) -> str:
         if powershell_result.stderr:
             output += f"\n[Errors/Warnings]:\n{powershell_result.stderr}"
 
+        audit_logger.info(f"Successfully executed script: {script_name}")
         return output if output.strip() else "Command executed with no output."
 
     except subprocess.TimeoutExpired:
         # 🛡️ Sentinel: Fail securely on timeout without leaking system state
+        audit_logger.error(f"Script execution timed out: {script_name}")
         return "Execution Failed: The diagnostic script timed out after 30 seconds."
-    except (OSError, ValueError):
+    except (OSError, ValueError) as e:
         # 🛡️ Sentinel: Return a generic error to prevent exposing system details
+        audit_logger.error(f"Unexpected error executing {script_name}: {e}")
         return (
             "Execution Failed: An unexpected error occurred "
             "while executing the diagnostic script."
@@ -232,7 +252,10 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
                 # Call litellm completion
                 # 🛡️ Sentinel: Add timeout to prevent API hangs from blocking Streamlit threads
                 response = completion(
-                    model=selected_model, messages=messages_for_llm, stream=True, timeout=30
+                    model=selected_model,
+                    messages=messages_for_llm,
+                    stream=True,
+                    timeout=30,
                 )
 
                 # Stream the response
@@ -249,9 +272,9 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
                     {"role": "assistant", "content": full_response}
                 )
 
-            except Exception:
+            except Exception as e:
                 # 🛡️ Sentinel: Catch all exceptions (Timeout, APIError) to avoid leaking stack traces to the UI.
-                # In a real app we would log str(e) securely here.
+                audit_logger.error(f"LLM API completion error securely caught: {e}")
                 ERROR_MSG = (
                     "An unexpected error occurred while generating the "
                     "response. Please try again later."
