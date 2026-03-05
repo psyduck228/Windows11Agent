@@ -128,6 +128,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     if st.button(
         "Analyze Startup Processes",
+        icon="🚀",
         help="Queries WMI to list programs that run when Windows starts.",
         use_container_width=True,
     ):
@@ -139,6 +140,7 @@ with col1:
 with col2:
     if st.button(
         "Check Network & Reset DNS",
+        icon="🌐",
         help="Lists network adapters and flushes the DNS resolver cache.",
         use_container_width=True,
     ):
@@ -155,6 +157,7 @@ with col2:
 with col3:
     if st.button(
         "Scan Critical Events",
+        icon="⚠️",
         help="Scans Windows Event Logs for recent critical system errors.",
         use_container_width=True,
     ):
@@ -232,7 +235,10 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
                 # Call litellm completion
                 # 🛡️ Sentinel: Add timeout to prevent API hangs from blocking Streamlit threads
                 response = completion(
-                    model=selected_model, messages=messages_for_llm, stream=True, timeout=30
+                    model=selected_model,
+                    messages=messages_for_llm,
+                    stream=True,
+                    timeout=30,
                 )
 
                 # Stream the response
