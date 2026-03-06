@@ -71,7 +71,10 @@ def run_powershell_script(script_name: str) -> str:
 
         output = powershell_result.stdout
         if powershell_result.stderr:
-            output += f"\n[Errors/Warnings]:\n{powershell_result.stderr}"
+            # 🛡️ Sentinel: Fail securely by logging errors instead of leaking them to the user interface
+            audit_logger.error(
+                f"Script {script_name} executed with errors/warnings: {powershell_result.stderr}"
+            )
 
         audit_logger.info(f"Successfully executed script: {script_name}")
         return output if output.strip() else "Command executed with no output."

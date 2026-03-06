@@ -17,3 +17,8 @@
 **Vulnerability:** The application was allowing users to execute privileged PowerShell scripts (using `-ExecutionPolicy Bypass`) without maintaining any internal record of when these scripts were executed, whether they succeeded, or if they failed. It also caught and swallowed LLM API exceptions securely but failed to record the error details anywhere for administrative review.
 **Learning:** For any application that executes potentially dangerous commands or acts as an administrative control panel, the lack of audit logging is a significant security gap. Without logs, it is impossible to perform post-incident forensics, monitor for abuse (e.g., repeated path traversal attempts or DoS via button mashing), or diagnose internal API failures without exposing details to the user.
 **Prevention:** Always implement robust, file-based security audit logging (e.g., using Python's `logging` module) to record the execution of sensitive operations, record any access violations, and securely capture the details of caught exceptions.
+
+## 2024-05-24 - Prevent Stderr Information Leakage from PowerShell Scripts
+**Vulnerability:** The application was appending raw `powershell_result.stderr` output directly to the user-facing `diagnostic_output`.
+**Learning:** Returning unhandled errors directly to users exposes internal system information (e.g., stack traces, paths, internal configuration), leading to information leakage which can facilitate further attacks.
+**Prevention:** Always log `stderr` from backend/system processes securely using a designated `audit_logger`, and provide generic, safe error messages to the user interface instead of returning raw exception details or stack traces.
