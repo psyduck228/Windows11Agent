@@ -138,6 +138,25 @@ with st.sidebar:
             available_models = default_gemini + available_models
 
     selected_model = st.selectbox("Select Model", available_models, index=0)
+
+    st.divider()
+    if st.button(
+        "Clear Chat History",
+        icon="🗑️",
+        help="Clear the conversation history.",
+        use_container_width=True,
+    ):
+        st.session_state["messages"] = [
+            {
+                "role": "assistant",
+                "content": (
+                    "Hello! I am your Windows 11 Diagnostic AI Agent. "
+                    "Run a diagnostic tool above and then ask me any questions "
+                    "about the results!"
+                ),
+            }
+        ]
+        st.rerun()
 # --- Header ---
 st.title("Windows 11 Diagnostic AI Agent")
 st.markdown("### Diagnostic Control Panel")
