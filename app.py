@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import time
 import streamlit as st  # type: ignore
 import google.generativeai as genai  # type: ignore
 from litellm import completion  # type: ignore
@@ -33,6 +34,15 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ps_scrip
 
 def run_powershell_script(script_name: str) -> str:
     """Executes a PowerShell script and returns the output."""
+    # 🛡️ Sentinel: Implement rate limiting to prevent CPU/memory exhaustion via rapid execution
+    current_time = time.time()
+    last_run = st.session_state.get("last_script_execution", 0)
+    if current_time - last_run < 5:
+        audit_logger.warning(f"Rate limit exceeded for script: {script_name}")
+        return "Error: Rate limit exceeded. Please wait 5 seconds before running another diagnostic."
+
+    st.session_state["last_script_execution"] = current_time
+
     audit_logger.info(f"Diagnostic script execution requested: {script_name}")
 
     # 🛡️ Sentinel: Prevent Path Traversal (LFI/RCE)

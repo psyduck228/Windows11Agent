@@ -22,3 +22,8 @@
 **Vulnerability:** The application was appending raw `powershell_result.stderr` output directly to the user-facing `diagnostic_output`.
 **Learning:** Returning unhandled errors directly to users exposes internal system information (e.g., stack traces, paths, internal configuration), leading to information leakage which can facilitate further attacks.
 **Prevention:** Always log `stderr` from backend/system processes securely using a designated `audit_logger`, and provide generic, safe error messages to the user interface instead of returning raw exception details or stack traces.
+
+## 2026-03-07 - Resource Exhaustion via Rapid Script Execution
+**Vulnerability:** The application allowed users to trigger resource-intensive PowerShell scripts (like WMI queries) continuously without delay. This lack of rate limiting could cause CPU and memory exhaustion, leading to a Denial of Service (DoS).
+**Learning:** Administrative endpoints that execute system commands are prime targets for resource exhaustion attacks (even accidental ones like button mashing).
+**Prevention:** Implement server-side rate limiting (e.g., using session state timestamps) to enforce cooldown periods between resource-intensive operations.
