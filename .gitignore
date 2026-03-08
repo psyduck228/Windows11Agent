@@ -2,5 +2,6 @@ __pycache__/
 .agents/
 .env
 .venv/
-.vscode/security_audit.log
+.vscode/
+security_audit.log
 streamlit_output.log
