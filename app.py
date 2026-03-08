@@ -150,7 +150,12 @@ with st.sidebar:
             # 🛡️ Sentinel: Catch all exceptions to prevent leaking API errors/stack traces
             available_models = default_gemini + available_models
 
-    selected_model = st.selectbox("Select Model", available_models, index=0)
+    selected_model = st.selectbox(
+        "Select Model",
+        available_models,
+        index=0,
+        help="Choose the AI model to analyze your diagnostics. Gemini models require a valid Google API Key.",
+    )
 
     st.divider()
     if st.button(
@@ -227,7 +232,7 @@ with st.container(height=300):
     if st.session_state["diagnostic_output"]:
         st.code(st.session_state["diagnostic_output"], language="powershell")
     else:
-        st.info("Run a diagnostic tool above to view output.")
+        st.info("Run a diagnostic tool above to view output.", icon="💡")
 
 st.divider()
 
