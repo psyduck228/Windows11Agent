@@ -2,3 +2,6 @@
 2026-03-07 12:25:18,722 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
 2026-03-07 12:25:18,867 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_startup_processes.ps1
 2026-03-07 12:25:19,001 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_startup_processes.ps1
+2026-03-08 11:19:17,082 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-08 11:19:17,099 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-08 11:19:20,342 - WARNING - SECURITY AUDIT - Rate limit exceeded for chat input.
