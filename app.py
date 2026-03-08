@@ -241,83 +241,97 @@ for message in st.session_state.messages:
 
 # Chat input
 # 🛡️ Sentinel: Enforce max input length to prevent potential resource exhaustion / DoS
-# 🛡️ Sentinel: Enforce max input length to prevent potential resource exhaustion / DoS
 CHAT_PLACEHOLDER = (
     "Ask a question about the diagnostic results..."
     if st.session_state.get("diagnostic_output")
     else "Run a diagnostic tool above first..."
 )
 CHAT_DISABLED = not bool(st.session_state.get("diagnostic_output"))
+
 if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISABLED):
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
+    # 🛡️ Sentinel: Implement rate limiting to prevent API abuse and DoS via rapid requests
+    current_time = time.time()
+    last_chat = st.session_state.get("last_chat_time", 0)
+    if current_time - last_chat < 3:
+        st.toast("Please wait a moment before sending another message.", icon="⚠️")
+        audit_logger.warning("Rate limit exceeded for chat input.")
+    else:
+        st.session_state["last_chat_time"] = current_time
 
-    # Display user message in chat message container
-    with st.chat_message("user"):
-        st.markdown(prompt)
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Add diagnostic output as context to the system prompt/latest message
-    system_instruction = """
-    You are an expert Windows IT support agent.
-    Your strict mandate is to answer the user's questions based ONLY on the provided system diagnostic results (e.g., WMI queries, Event Logs).
-    If the user asks a question that cannot be answered using the provided diagnostic data, politely refuse to answer and instruct them to run the appropriate diagnostic tool first.
-    """
-    if st.session_state["diagnostic_output"]:
-        system_instruction += (
-            "\n\n### CURRENT DIAGNOSTIC OUTPUT ###\n"
-            + st.session_state["diagnostic_output"]
-        )
+        # Display user message in chat message container
+        with st.chat_message("user"):
+            st.markdown(prompt)
 
-    # Convert chat history to OpenAI format for litellm
-    messages_for_llm = [{"role": "system", "content": system_instruction}]
-    for msg in st.session_state.messages:
-        messages_for_llm.append({"role": msg["role"], "content": msg["content"]})
-
-    with st.chat_message("assistant"):
-        if selected_model.startswith("gemini") and (
-            not api_key or api_key == "your_google_api_key_here"
-        ):
-            ERROR_MSG = (
-                "Please configure your `GOOGLE_API_KEY` in the "
-                "`.env` file to use Gemini models."
+        # Add diagnostic output as context to the system prompt/latest message
+        system_instruction = """
+        You are an expert Windows IT support agent.
+        Your strict mandate is to answer the user's questions based ONLY on the provided system diagnostic results (e.g., WMI queries, Event Logs).
+        If the user asks a question that cannot be answered using the provided diagnostic data, politely refuse to answer and instruct them to run the appropriate diagnostic tool first.
+        """
+        if st.session_state["diagnostic_output"]:
+            system_instruction += (
+                "\n\n### CURRENT DIAGNOSTIC OUTPUT ###\n"
+                + st.session_state["diagnostic_output"]
             )
-            st.error(ERROR_MSG)
-            st.session_state.messages.append(
-                {"role": "assistant", "content": ERROR_MSG}
-            )
-        else:
-            try:
-                # Call litellm completion
-                # 🛡️ Sentinel: Add timeout to prevent API hangs from blocking Streamlit threads
-                response = completion(
-                    model=selected_model,
-                    messages=messages_for_llm,
-                    stream=True,
-                    timeout=30,
-                )
 
-                # Stream the response
-                def generate():
-                    """Yields chunks of the stream response."""
-                    for chunk in response:
-                        content = chunk.choices[0].delta.content  # type: ignore
-                        if content:
-                            yield content
+        # Convert chat history to OpenAI format for litellm
+        messages_for_llm = [{"role": "system", "content": system_instruction}]
 
-                full_response = st.write_stream(generate())
+        # 🛡️ Sentinel: Limit conversation history to prevent Context Window/Token Exhaustion DoS
+        MAX_HISTORY = 10
+        history = st.session_state.messages[-MAX_HISTORY:]
 
-                st.session_state.messages.append(
-                    {"role": "assistant", "content": full_response}
-                )
+        for msg in history:
+            messages_for_llm.append({"role": msg["role"], "content": msg["content"]})
 
-            except Exception as e:
-                # 🛡️ Sentinel: Catch all exceptions (Timeout, APIError) to avoid leaking stack traces to the UI.
-                audit_logger.error(f"LLM API completion error securely caught: {e}")
+        with st.chat_message("assistant"):
+            if selected_model.startswith("gemini") and (
+                not api_key or api_key == "your_google_api_key_here"
+            ):
                 ERROR_MSG = (
-                    "An unexpected error occurred while generating the "
-                    "response. Please try again later."
+                    "Please configure your `GOOGLE_API_KEY` in the "
+                    "`.env` file to use Gemini models."
                 )
                 st.error(ERROR_MSG)
                 st.session_state.messages.append(
                     {"role": "assistant", "content": ERROR_MSG}
                 )
+            else:
+                try:
+                    # Call litellm completion
+                    # 🛡️ Sentinel: Add timeout to prevent API hangs from blocking Streamlit threads
+                    response = completion(
+                        model=selected_model,
+                        messages=messages_for_llm,
+                        stream=True,
+                        timeout=30,
+                    )
+
+                    # Stream the response
+                    def generate():
+                        """Yields chunks of the stream response."""
+                        for chunk in response:
+                            content = chunk.choices[0].delta.content  # type: ignore
+                            if content:
+                                yield content
+
+                    full_response = st.write_stream(generate())
+
+                    st.session_state.messages.append(
+                        {"role": "assistant", "content": full_response}
+                    )
+
+                except Exception as e:
+                    # 🛡️ Sentinel: Catch all exceptions (Timeout, APIError) to avoid leaking stack traces to the UI.
+                    audit_logger.error(f"LLM API completion error securely caught: {e}")
+                    ERROR_MSG = (
+                        "An unexpected error occurred while generating the "
+                        "response. Please try again later."
+                    )
+                    st.error(ERROR_MSG)
+                    st.session_state.messages.append(
+                        {"role": "assistant", "content": ERROR_MSG}
+                    )

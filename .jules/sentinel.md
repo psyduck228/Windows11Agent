@@ -27,3 +27,8 @@
 **Vulnerability:** The application allowed users to trigger resource-intensive PowerShell scripts (like WMI queries) continuously without delay. This lack of rate limiting could cause CPU and memory exhaustion, leading to a Denial of Service (DoS).
 **Learning:** Administrative endpoints that execute system commands are prime targets for resource exhaustion attacks (even accidental ones like button mashing).
 **Prevention:** Implement server-side rate limiting (e.g., using session state timestamps) to enforce cooldown periods between resource-intensive operations.
+
+## 2024-05-24 - LLM Denial of Wallet and Context Exhaustion
+**Vulnerability:** The chat interface lacked rate limiting on user inputs and didn't restrict the number of previous messages sent to the LLM. An attacker could rapidly spam messages, driving up API costs (Denial of Wallet) or exhausting the model's context window, causing requests to fail or take exponentially longer.
+**Learning:** Chat interfaces connected to paid or rate-limited LLM APIs must have both input frequency limits (cooldowns) and token/context limits (restricting history length) to prevent abuse and excessive costs.
+**Prevention:** Always implement a cooldown mechanism (e.g., 3 seconds) for user chat inputs and explicitly limit the array of previous messages (e.g., last 10 messages) appended to the API request context.
