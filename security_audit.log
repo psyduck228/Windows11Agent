@@ -23,3 +23,16 @@
 2026-03-09 11:14:04,159 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
 2026-03-09 11:14:04,161 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
 2026-03-09 11:14:04,323 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_startup_processes.ps1
+2026-03-09 19:17:36,626 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-09 19:17:36,639 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-09 19:17:36,641 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_network_adapters.ps1
+2026-03-09 19:17:36,641 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: reset_dns_cache.ps1
+2026-03-09 19:17:36,642 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_critical_events.ps1
+2026-03-09 19:17:54,179 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-09 19:17:54,180 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-09 19:17:54,182 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_network_adapters.ps1
+2026-03-09 19:17:54,183 - ERROR - SECURITY AUDIT - Unexpected error executing get_network_adapters.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-09 19:17:54,184 - INFO - SECURITY AUDIT - Diagnostic script execution requested: reset_dns_cache.ps1
+2026-03-09 19:17:54,184 - ERROR - SECURITY AUDIT - Unexpected error executing reset_dns_cache.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-09 19:17:54,185 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_critical_events.ps1
+2026-03-09 19:17:54,186 - ERROR - SECURITY AUDIT - Unexpected error executing get_critical_events.ps1: [Errno 2] No such file or directory: 'powershell'

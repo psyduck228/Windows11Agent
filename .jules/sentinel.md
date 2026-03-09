@@ -36,3 +36,8 @@
 **Vulnerability:** Streamlit user interface displayed successful `st.toast("Analysis complete!", icon="✅")` even when underlying powershell execution scripts failed, misleading users.
 **Learning:** Security feedback in UI must accurately reflect actual backend operation results; false positives can lead users to mistakenly believe diagnostics were run correctly or that the system is secure.
 **Prevention:** Always conditionally verify the return values or error states of backend calls (e.g., checking if output starts with 'Error:' or 'Execution Failed:') before presenting success feedback to the user via UI components like `st.toast`.
+
+## 2025-05-14 - Missing Whitelist Validation for Script Execution
+**Vulnerability:** The `run_powershell_script` function accepted any string as a `script_name`. While path traversal checks were in place, an attacker could still potentially execute any script within the `ps_scripts` directory, even if not intended for user access.
+**Learning:** Relying solely on path validation (like `startswith`) is a "filtering" approach which is less secure than a "whitelisting" approach. If new scripts are added to the directory for internal use, they might be accidentally exposed.
+**Prevention:** Always implement a strict allowlist (whitelist) of known-good inputs for sensitive operations like system command execution. This provides a definitive defense-in-depth layer.
