@@ -31,6 +31,12 @@ if api_key and api_key != "your_google_api_key_here":
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ps_scripts")
 
+WELCOME_MESSAGE = (
+    "Hello! I am your Windows 11 Diagnostic AI Agent. "
+    "Run a diagnostic tool above and then ask me any questions "
+    "about the results!"
+)
+
 
 @st.cache_data(ttl=3600)
 def get_gemini_models():
@@ -119,16 +125,7 @@ if "diagnostic_output" not in st.session_state:
     st.session_state["diagnostic_output"] = ""
 
 if "messages" not in st.session_state:
-    st.session_state["messages"] = [
-        {
-            "role": "assistant",
-            "content": (
-                "Hello! I am your Windows 11 Diagnostic AI Agent. "
-                "Run a diagnostic tool above and then ask me any questions "
-                "about the results!"
-            ),
-        }
-    ]
+    st.session_state["messages"] = [{"role": "assistant", "content": WELCOME_MESSAGE}]
 
 # --- Sidebar ---
 with st.sidebar:
@@ -171,14 +168,7 @@ with st.sidebar:
         use_container_width=True,
     ):
         st.session_state["messages"] = [
-            {
-                "role": "assistant",
-                "content": (
-                    "Hello! I am your Windows 11 Diagnostic AI Agent. "
-                    "Run a diagnostic tool above and then ask me any questions "
-                    "about the results!"
-                ),
-            }
+            {"role": "assistant", "content": WELCOME_MESSAGE}
         ]
         st.rerun()
 # --- Header ---
