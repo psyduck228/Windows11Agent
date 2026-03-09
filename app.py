@@ -32,6 +32,16 @@ if api_key and api_key != "your_google_api_key_here":
 SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ps_scripts")
 
 
+@st.cache_data(ttl=3600)
+def get_gemini_models():
+    """Fetches available Gemini models from the Google Generative AI API."""
+    return [
+        f"gemini/{m.name.split('models/')[1]}"  # type: ignore
+        for m in genai.list_models()  # type: ignore
+        if "generateContent" in getattr(m, "supported_generation_methods", [])
+    ]
+
+
 def run_powershell_script(script_name: str) -> str:
     """Executes a PowerShell script and returns the output."""
     # 🛡️ Sentinel: Implement rate limiting to prevent CPU/memory exhaustion via rapid execution
@@ -137,11 +147,7 @@ with st.sidebar:
     else:
         st.success("Google API Key loaded.", icon="✅")
         try:
-            gemini_models = [
-                f"gemini/{m.name.split('models/')[1]}"  # type: ignore
-                for m in genai.list_models()  # type: ignore
-                if "generateContent" in getattr(m, "supported_generation_methods", [])
-            ]
+            gemini_models = get_gemini_models()
             if gemini_models:
                 available_models = gemini_models + available_models
             else:
