@@ -31,6 +31,14 @@ if api_key and api_key != "your_google_api_key_here":
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ps_scripts")
 
+# 🛡️ Sentinel: Strict allowlist of scripts to prevent unauthorized execution
+ALLOWED_SCRIPTS = {
+    "get_startup_processes.ps1",
+    "get_network_adapters.ps1",
+    "reset_dns_cache.ps1",
+    "get_critical_events.ps1",
+}
+
 WELCOME_MESSAGE = (
     "Hello! I am your Windows 11 Diagnostic AI Agent. "
     "Run a diagnostic tool above and then ask me any questions "
@@ -50,6 +58,11 @@ def get_gemini_models():
 
 def run_powershell_script(script_name: str) -> str:
     """Executes a PowerShell script and returns the output."""
+    # 🛡️ Sentinel: Implement strict whitelist validation for script execution
+    if script_name not in ALLOWED_SCRIPTS:
+        audit_logger.warning(f"Unauthorized script execution attempt: {script_name}")
+        return "Error: Unauthorized script execution requested."
+
     # 🛡️ Sentinel: Implement rate limiting to prevent CPU/memory exhaustion via rapid execution
     current_time = time.time()
     last_run = st.session_state.get("last_script_execution", 0)
