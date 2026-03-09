@@ -193,7 +193,7 @@ with col1:
         with st.spinner("Analyzing startup processes..."):
             result = run_powershell_script("get_startup_processes.ps1")
         if result.startswith("Error:") or result.startswith("Execution Failed:"):
-            st.toast("Analysis failed", icon="❌")
+            st.toast("Analysis failed!", icon="❌")
         else:
             st.toast("Analysis complete!", icon="✅")
         st.session_state["diagnostic_output"] += result
@@ -217,7 +217,7 @@ with col2:
             or result2.startswith("Error:")
             or result2.startswith("Execution Failed:")
         ):
-            st.toast("Analysis failed", icon="❌")
+            st.toast("Analysis failed!", icon="❌")
         else:
             st.toast("Analysis complete!", icon="✅")
         st.session_state[
@@ -235,7 +235,7 @@ with col3:
         with st.spinner("Scanning critical events..."):
             result = run_powershell_script("get_critical_events.ps1")
         if result.startswith("Error:") or result.startswith("Execution Failed:"):
-            st.toast("Analysis failed", icon="❌")
+            st.toast("Analysis failed!", icon="❌")
         else:
             st.toast("Analysis complete!", icon="✅")
         st.session_state["diagnostic_output"] += result
