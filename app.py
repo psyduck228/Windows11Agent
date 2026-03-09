@@ -39,6 +39,22 @@ ALLOWED_SCRIPTS = {
     "get_critical_events.ps1",
 }
 
+WELCOME_MESSAGE = (
+    "Hello! I am your Windows 11 Diagnostic AI Agent. "
+    "Run a diagnostic tool above and then ask me any questions "
+    "about the results!"
+)
+
+
+@st.cache_data(ttl=3600)
+def get_gemini_models():
+    """Fetches available Gemini models from the Google Generative AI API."""
+    return [
+        f"gemini/{m.name.split('models/')[1]}"  # type: ignore
+        for m in genai.list_models()  # type: ignore
+        if "generateContent" in getattr(m, "supported_generation_methods", [])
+    ]
+
 
 def run_powershell_script(script_name: str) -> str:
     """Executes a PowerShell script and returns the output."""
@@ -122,16 +138,7 @@ if "diagnostic_output" not in st.session_state:
     st.session_state["diagnostic_output"] = ""
 
 if "messages" not in st.session_state:
-    st.session_state["messages"] = [
-        {
-            "role": "assistant",
-            "content": (
-                "Hello! I am your Windows 11 Diagnostic AI Agent. "
-                "Run a diagnostic tool above and then ask me any questions "
-                "about the results!"
-            ),
-        }
-    ]
+    st.session_state["messages"] = [{"role": "assistant", "content": WELCOME_MESSAGE}]
 
 # --- Sidebar ---
 with st.sidebar:
@@ -150,11 +157,7 @@ with st.sidebar:
     else:
         st.success("Google API Key loaded.", icon="✅")
         try:
-            gemini_models = [
-                f"gemini/{m.name.split('models/')[1]}"  # type: ignore
-                for m in genai.list_models()  # type: ignore
-                if "generateContent" in getattr(m, "supported_generation_methods", [])
-            ]
+            gemini_models = get_gemini_models()
             if gemini_models:
                 available_models = gemini_models + available_models
             else:
@@ -178,14 +181,7 @@ with st.sidebar:
         use_container_width=True,
     ):
         st.session_state["messages"] = [
-            {
-                "role": "assistant",
-                "content": (
-                    "Hello! I am your Windows 11 Diagnostic AI Agent. "
-                    "Run a diagnostic tool above and then ask me any questions "
-                    "about the results!"
-                ),
-            }
+            {"role": "assistant", "content": WELCOME_MESSAGE}
         ]
         st.rerun()
 # --- Header ---
