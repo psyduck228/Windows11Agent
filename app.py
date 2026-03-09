@@ -192,7 +192,12 @@ with col1:
         st.session_state["diagnostic_output"] = "Analyzing startup processes...\n\n"
         with st.spinner("Analyzing startup processes..."):
             result = run_powershell_script("get_startup_processes.ps1")
-        st.toast("Analysis complete!", icon="✅")
+
+        if result.startswith("Error:") or result.startswith("Execution Failed:"):
+            st.toast("Analysis failed!", icon="❌")
+        else:
+            st.toast("Analysis complete!", icon="✅")
+
         st.session_state["diagnostic_output"] += result
 
 with col2:
@@ -208,7 +213,17 @@ with col2:
         with st.spinner("Checking network & resetting DNS..."):
             result1 = run_powershell_script("get_network_adapters.ps1")
             result2 = run_powershell_script("reset_dns_cache.ps1")
-        st.toast("Analysis complete!", icon="✅")
+
+        if (
+            result1.startswith("Error:")
+            or result1.startswith("Execution Failed:")
+            or result2.startswith("Error:")
+            or result2.startswith("Execution Failed:")
+        ):
+            st.toast("Analysis failed!", icon="❌")
+        else:
+            st.toast("Analysis complete!", icon="✅")
+
         st.session_state[
             "diagnostic_output"
         ] += f"--- Network Check ---\n{result1}\n\n--- DNS Reset ---\n{result2}"
@@ -223,7 +238,12 @@ with col3:
         st.session_state["diagnostic_output"] = "Scanning recent critical events...\n\n"
         with st.spinner("Scanning critical events..."):
             result = run_powershell_script("get_critical_events.ps1")
-        st.toast("Analysis complete!", icon="✅")
+
+        if result.startswith("Error:") or result.startswith("Execution Failed:"):
+            st.toast("Analysis failed!", icon="❌")
+        else:
+            st.toast("Analysis complete!", icon="✅")
+
         st.session_state["diagnostic_output"] += result
 
 # --- Output Area ---

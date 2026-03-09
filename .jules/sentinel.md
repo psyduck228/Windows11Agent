@@ -32,3 +32,7 @@
 **Vulnerability:** The chat interface lacked rate limiting on user inputs and didn't restrict the number of previous messages sent to the LLM. An attacker could rapidly spam messages, driving up API costs (Denial of Wallet) or exhausting the model's context window, causing requests to fail or take exponentially longer.
 **Learning:** Chat interfaces connected to paid or rate-limited LLM APIs must have both input frequency limits (cooldowns) and token/context limits (restricting history length) to prevent abuse and excessive costs.
 **Prevention:** Always implement a cooldown mechanism (e.g., 3 seconds) for user chat inputs and explicitly limit the array of previous messages (e.g., last 10 messages) appended to the API request context.
+## 2024-05-18 - Prevent False-Positive Success Responses
+**Vulnerability:** Streamlit user interface displayed successful `st.toast("Analysis complete!", icon="✅")` even when underlying powershell execution scripts failed, misleading users.
+**Learning:** Security feedback in UI must accurately reflect actual backend operation results; false positives can lead users to mistakenly believe diagnostics were run correctly or that the system is secure.
+**Prevention:** Always conditionally verify the return values or error states of backend calls (e.g., checking if output starts with 'Error:' or 'Execution Failed:') before presenting success feedback to the user via UI components like `st.toast`.
