@@ -8,12 +8,14 @@ import google.generativeai as genai  # type: ignore
 from litellm import completion  # type: ignore
 from dotenv import load_dotenv  # type: ignore
 import logging
+from logging.handlers import RotatingFileHandler
 
 # 🛡️ Sentinel: Configure secure audit logging for sensitive operations
+# 🛡️ Sentinel: Use RotatingFileHandler to prevent unbounded log growth (Disk Exhaustion DoS)
 audit_logger = logging.getLogger("security_audit")
 audit_logger.setLevel(logging.INFO)
 if not audit_logger.handlers:
-    fh = logging.FileHandler("security_audit.log")
+    fh = RotatingFileHandler("security_audit.log", maxBytes=5*1024*1024, backupCount=3)
     fh.setFormatter(
         logging.Formatter("%(asctime)s - %(levelname)s - SECURITY AUDIT - %(message)s")
     )

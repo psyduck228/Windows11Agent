@@ -36,3 +36,79 @@
 2026-03-09 19:17:54,184 - ERROR - SECURITY AUDIT - Unexpected error executing reset_dns_cache.ps1: [Errno 2] No such file or directory: 'powershell'
 2026-03-09 19:17:54,185 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_critical_events.ps1
 2026-03-09 19:17:54,186 - ERROR - SECURITY AUDIT - Unexpected error executing get_critical_events.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:13:25,803 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-10 11:13:25,821 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:13:25,824 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_network_adapters.ps1
+2026-03-10 11:13:25,825 - ERROR - SECURITY AUDIT - Unexpected error executing get_network_adapters.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:13:25,825 - INFO - SECURITY AUDIT - Diagnostic script execution requested: reset_dns_cache.ps1
+2026-03-10 11:13:25,826 - ERROR - SECURITY AUDIT - Unexpected error executing reset_dns_cache.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:13:25,827 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_critical_events.ps1
+2026-03-10 11:13:25,828 - ERROR - SECURITY AUDIT - Unexpected error executing get_critical_events.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:13:25,847 - WARNING - SECURITY AUDIT - Unauthorized script execution attempt: ../app.py
+2026-03-10 11:13:25,880 - WARNING - SECURITY AUDIT - Unauthorized script execution attempt: ../../etc/passwd
+2026-03-10 11:13:25,884 - WARNING - SECURITY AUDIT - Unauthorized script execution attempt: ps_scripts/../../app.py
+2026-03-10 11:13:25,888 - WARNING - SECURITY AUDIT - Unauthorized script execution attempt: /etc/passwd
+2026-03-10 11:13:25,892 - WARNING - SECURITY AUDIT - Unauthorized script execution attempt: ../../Windows/System32/drivers/etc/hosts
+2026-03-10 11:13:25,896 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-10 11:13:25,896 - INFO - SECURITY AUDIT - Successfully executed script: get_startup_processes.ps1
+2026-03-10 11:13:25,897 - WARNING - SECURITY AUDIT - Unauthorized script execution attempt: ../ps_scripts_dangerous/attack.ps1
+2026-03-10 11:14:14,488 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-10 11:14:14,491 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:14:14,494 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_network_adapters.ps1
+2026-03-10 11:14:14,495 - ERROR - SECURITY AUDIT - Unexpected error executing get_network_adapters.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:14:14,496 - INFO - SECURITY AUDIT - Diagnostic script execution requested: reset_dns_cache.ps1
+2026-03-10 11:14:14,496 - ERROR - SECURITY AUDIT - Unexpected error executing reset_dns_cache.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:14:14,498 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_critical_events.ps1
+2026-03-10 11:14:14,499 - ERROR - SECURITY AUDIT - Unexpected error executing get_critical_events.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:20:41,477 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-10 11:20:41,479 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:20:41,482 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_network_adapters.ps1
+2026-03-10 11:20:41,483 - ERROR - SECURITY AUDIT - Unexpected error executing get_network_adapters.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:20:41,484 - INFO - SECURITY AUDIT - Diagnostic script execution requested: reset_dns_cache.ps1
+2026-03-10 11:20:41,484 - ERROR - SECURITY AUDIT - Unexpected error executing reset_dns_cache.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:20:41,486 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_critical_events.ps1
+2026-03-10 11:20:41,487 - ERROR - SECURITY AUDIT - Unexpected error executing get_critical_events.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:20:41,504 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../app.py
+2026-03-10 11:20:41,504 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../app.py
+2026-03-10 11:20:41,505 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../../etc/passwd
+2026-03-10 11:20:41,505 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../../etc/passwd
+2026-03-10 11:20:41,507 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ps_scripts/../../app.py
+2026-03-10 11:20:41,507 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ps_scripts/../../app.py
+2026-03-10 11:20:41,508 - INFO - SECURITY AUDIT - Diagnostic script execution requested: /etc/passwd
+2026-03-10 11:20:41,508 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: /etc/passwd
+2026-03-10 11:20:41,509 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../../Windows/System32/drivers/etc/hosts
+2026-03-10 11:20:41,509 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../../Windows/System32/drivers/etc/hosts
+2026-03-10 11:20:41,511 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-10 11:20:41,511 - INFO - SECURITY AUDIT - Successfully executed script: get_startup_processes.ps1
+2026-03-10 11:20:41,512 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../ps_scripts_dangerous/attack.ps1
+2026-03-10 11:20:41,512 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../ps_scripts_dangerous/attack.ps1
+2026-03-10 11:20:56,847 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-10 11:20:56,849 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:20:56,851 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_network_adapters.ps1
+2026-03-10 11:20:56,852 - ERROR - SECURITY AUDIT - Unexpected error executing get_network_adapters.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:20:56,852 - INFO - SECURITY AUDIT - Diagnostic script execution requested: reset_dns_cache.ps1
+2026-03-10 11:20:56,852 - ERROR - SECURITY AUDIT - Unexpected error executing reset_dns_cache.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:20:56,854 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_critical_events.ps1
+2026-03-10 11:20:56,854 - ERROR - SECURITY AUDIT - Unexpected error executing get_critical_events.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:21:24,008 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-10 11:21:24,009 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:21:24,012 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_network_adapters.ps1
+2026-03-10 11:21:24,013 - ERROR - SECURITY AUDIT - Unexpected error executing get_network_adapters.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:21:24,013 - INFO - SECURITY AUDIT - Diagnostic script execution requested: reset_dns_cache.ps1
+2026-03-10 11:21:24,014 - ERROR - SECURITY AUDIT - Unexpected error executing reset_dns_cache.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:21:24,015 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_critical_events.ps1
+2026-03-10 11:21:24,016 - ERROR - SECURITY AUDIT - Unexpected error executing get_critical_events.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:21:24,032 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../app.py
+2026-03-10 11:21:24,032 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../app.py
+2026-03-10 11:21:24,033 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../../etc/passwd
+2026-03-10 11:21:24,034 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../../etc/passwd
+2026-03-10 11:21:24,035 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ps_scripts/../../app.py
+2026-03-10 11:21:24,035 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ps_scripts/../../app.py
+2026-03-10 11:21:24,036 - INFO - SECURITY AUDIT - Diagnostic script execution requested: /etc/passwd
+2026-03-10 11:21:24,036 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: /etc/passwd
+2026-03-10 11:21:24,037 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../../Windows/System32/drivers/etc/hosts
+2026-03-10 11:21:24,037 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../../Windows/System32/drivers/etc/hosts
+2026-03-10 11:21:24,039 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-10 11:21:24,039 - INFO - SECURITY AUDIT - Successfully executed script: get_startup_processes.ps1
+2026-03-10 11:21:24,041 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../ps_scripts_dangerous/attack.ps1
+2026-03-10 11:21:24,041 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../ps_scripts_dangerous/attack.ps1
