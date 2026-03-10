@@ -27,7 +27,8 @@ import app
 def test_run_powershell_script_path_traversal(invalid_script):
     """Test that various path traversal attempts are blocked."""
     # Reset last_script_execution to 0 to bypass rate limit
-    with patch('app.st.session_state', {'last_script_execution': 0}):
+    with patch('app.st.session_state', {'last_script_execution': 0}), \
+         patch('app.ALLOWED_SCRIPTS', {invalid_script}):
         result = app.run_powershell_script(invalid_script)
 
     assert result == "Error: Invalid script path requested."
@@ -56,7 +57,8 @@ def test_run_powershell_script_sibling_directory_traversal():
 
         sibling_script = "../ps_scripts_dangerous/attack.ps1"
 
-        with patch('app.st.session_state', {'last_script_execution': 0}):
+        with patch('app.st.session_state', {'last_script_execution': 0}), \
+             patch('app.ALLOWED_SCRIPTS', {sibling_script}):
             result = app.run_powershell_script(sibling_script)
 
         assert result == "Error: Invalid script path requested."

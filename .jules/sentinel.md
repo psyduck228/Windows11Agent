@@ -41,3 +41,8 @@
 **Vulnerability:** The `run_powershell_script` function accepted any string as a `script_name`. While path traversal checks were in place, an attacker could still potentially execute any script within the `ps_scripts` directory, even if not intended for user access.
 **Learning:** Relying solely on path validation (like `startswith`) is a "filtering" approach which is less secure than a "whitelisting" approach. If new scripts are added to the directory for internal use, they might be accidentally exposed.
 **Prevention:** Always implement a strict allowlist (whitelist) of known-good inputs for sensitive operations like system command execution. This provides a definitive defense-in-depth layer.
+
+## 2024-05-24 - Unbounded Audit Log Growth
+**Vulnerability:** The application was using a standard `logging.FileHandler` for its security audit logger. A malicious actor could intentionally trigger security warnings or errors rapidly to inflate the log file size indefinitely, exhausting disk space and causing a system-wide Denial of Service (DoS).
+**Learning:** Any file-based logging mechanism in a production-like environment (especially security or audit logs that can be triggered by user actions) must be bounded.
+**Prevention:** Always use `logging.handlers.RotatingFileHandler` (or `TimedRotatingFileHandler`) with strict limits on file size (`maxBytes`) and number of backup files (`backupCount`) to ensure the maximum disk footprint is deterministic.
