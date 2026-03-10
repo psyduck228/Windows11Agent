@@ -4,3 +4,6 @@
 ## 2024-05-24 - Accurate Toast Feedback
 **Learning:** Blindly showing a success toast (`st.toast('Analysis complete!', icon='✅')`) when a backend process actually fails or is rate-limited creates confusing, contradictory signals for the user. They see 'Success' but the output says 'Error'.
 **Action:** Always check the result or status of the backend operation before displaying feedback, and use the appropriate toast variation (success vs. failure) to match the actual outcome.
+## 2024-05-31 - Contextual Disabled States
+**Learning:** Disabling buttons without explaining *why* they are disabled (e.g., a 'Clear Chat' button when the chat is already empty) leaves users confused about whether the app is broken or if they just can't perform the action right now.
+**Action:** When conditionally disabling an interactive element, dynamically update its tooltip (`help`) to explicitly explain the disabled state to the user.

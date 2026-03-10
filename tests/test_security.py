@@ -7,7 +7,13 @@ import sys
 st_mock = MagicMock()
 st_mock.columns.return_value = [MagicMock(), MagicMock(), MagicMock()]
 st_mock.sidebar.__enter__.return_value = MagicMock()
-st_mock.session_state.get.return_value = 0
+
+def mock_get(key, default=None):
+    if key == "messages":
+        return []
+    return 0
+
+st_mock.session_state.get.side_effect = mock_get
 
 sys.modules['streamlit'] = st_mock
 sys.modules['litellm'] = MagicMock()
