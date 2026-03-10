@@ -174,11 +174,17 @@ with st.sidebar:
     )
 
     st.divider()
+    is_chat_empty = len(st.session_state.get("messages", [])) <= 1
     if st.button(
         "Clear Chat History",
         icon="🗑️",
-        help="Clear the conversation history.",
+        help=(
+            "Chat history is already empty."
+            if is_chat_empty
+            else "Clear the conversation history."
+        ),
         use_container_width=True,
+        disabled=is_chat_empty,
     ):
         st.session_state["messages"] = [
             {"role": "assistant", "content": WELCOME_MESSAGE}
@@ -323,7 +329,7 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
                     "Please configure your `GOOGLE_API_KEY` in the "
                     "`.env` file to use Gemini models."
                 )
-                st.error(ERROR_MSG)
+                st.error(ERROR_MSG, icon="❌")
                 st.session_state.messages.append(
                     {"role": "assistant", "content": ERROR_MSG}
                 )
@@ -359,7 +365,7 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
                         "An unexpected error occurred while generating the "
                         "response. Please try again later."
                     )
-                    st.error(ERROR_MSG)
+                    st.error(ERROR_MSG, icon="❌")
                     st.session_state.messages.append(
                         {"role": "assistant", "content": ERROR_MSG}
                     )

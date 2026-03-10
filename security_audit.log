@@ -36,3 +36,19 @@
 2026-03-09 19:17:54,184 - ERROR - SECURITY AUDIT - Unexpected error executing reset_dns_cache.ps1: [Errno 2] No such file or directory: 'powershell'
 2026-03-09 19:17:54,185 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_critical_events.ps1
 2026-03-09 19:17:54,186 - ERROR - SECURITY AUDIT - Unexpected error executing get_critical_events.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:25:11,765 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-10 11:25:11,782 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:25:11,784 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_network_adapters.ps1
+2026-03-10 11:25:11,785 - ERROR - SECURITY AUDIT - Unexpected error executing get_network_adapters.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:25:11,785 - INFO - SECURITY AUDIT - Diagnostic script execution requested: reset_dns_cache.ps1
+2026-03-10 11:25:11,786 - ERROR - SECURITY AUDIT - Unexpected error executing reset_dns_cache.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:25:11,787 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_critical_events.ps1
+2026-03-10 11:25:11,788 - ERROR - SECURITY AUDIT - Unexpected error executing get_critical_events.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-10 11:25:11,802 - WARNING - SECURITY AUDIT - Unauthorized script execution attempt: ../app.py
+2026-03-10 11:25:11,835 - WARNING - SECURITY AUDIT - Unauthorized script execution attempt: ../../etc/passwd
+2026-03-10 11:25:11,841 - WARNING - SECURITY AUDIT - Unauthorized script execution attempt: ps_scripts/../../app.py
+2026-03-10 11:25:11,846 - WARNING - SECURITY AUDIT - Unauthorized script execution attempt: /etc/passwd
+2026-03-10 11:25:11,851 - WARNING - SECURITY AUDIT - Unauthorized script execution attempt: ../../Windows/System32/drivers/etc/hosts
+2026-03-10 11:25:11,856 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-10 11:25:11,856 - INFO - SECURITY AUDIT - Successfully executed script: get_startup_processes.ps1
+2026-03-10 11:25:11,858 - WARNING - SECURITY AUDIT - Unauthorized script execution attempt: ../ps_scripts_dangerous/attack.ps1
