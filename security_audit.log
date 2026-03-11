@@ -112,9 +112,26 @@
 2026-03-10 11:21:24,039 - INFO - SECURITY AUDIT - Successfully executed script: get_startup_processes.ps1
 2026-03-10 11:21:24,041 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../ps_scripts_dangerous/attack.ps1
 2026-03-10 11:21:24,041 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../ps_scripts_dangerous/attack.ps1
-2026-03-11 18:46:03,850 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
-2026-03-11 18:46:03,853 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
-2026-03-11 18:46:03,855 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_network_adapters.ps1
-2026-03-11 18:46:03,856 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: reset_dns_cache.ps1
-2026-03-11 18:46:03,857 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_critical_events.ps1
-2026-03-11 18:46:03,864 - WARNING - SECURITY AUDIT - Unauthorized model selection bypassed UI: <MagicMock name='mock.selectbox()' id='140459667749968'>
+2026-03-11 11:16:52,743 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-11 11:16:52,764 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-11 11:16:56,036 - WARNING - SECURITY AUDIT - Rate limit exceeded for chat input.
+2026-03-11 11:16:56,650 - ERROR - SECURITY AUDIT - LLM API completion error securely caught: litellm.APIConnectionError: OllamaException - [Errno 111] Connection refused
+2026-03-11 11:17:26,378 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-11 11:17:26,379 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-11 11:17:26,381 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_network_adapters.ps1
+2026-03-11 11:17:26,381 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: reset_dns_cache.ps1
+2026-03-11 11:17:26,382 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_critical_events.ps1
+2026-03-11 11:17:48,423 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-11 11:17:48,425 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-11 11:17:51,658 - WARNING - SECURITY AUDIT - Rate limit exceeded for chat input.
+2026-03-11 11:17:52,132 - ERROR - SECURITY AUDIT - LLM API completion error securely caught: litellm.APIConnectionError: OllamaException - [Errno 111] Connection refused
+2026-03-11 11:17:59,873 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-11 11:17:59,875 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-11 11:18:02,962 - ERROR - SECURITY AUDIT - LLM API completion error securely caught: litellm.APIConnectionError: OllamaException - [Errno 111] Connection refused
+2026-03-11 11:18:03,139 - WARNING - SECURITY AUDIT - Rate limit exceeded for chat input.
+2026-03-11 18:51:03,182 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-11 18:51:03,184 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-11 18:51:03,186 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_network_adapters.ps1
+2026-03-11 18:51:03,186 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: reset_dns_cache.ps1
+2026-03-11 18:51:03,187 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_critical_events.ps1
+2026-03-11 18:51:03,192 - WARNING - SECURITY AUDIT - Unauthorized model selection bypassed UI: <MagicMock name='mock.selectbox()' id='140706172878672'>
