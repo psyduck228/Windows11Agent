@@ -154,8 +154,7 @@ with st.sidebar:
     ]
 
     if not api_key or api_key == "your_google_api_key_here":
-        st.warning("GOOGLE_API_KEY missing. Gemini models will not work.", icon="⚠️")
-        available_models = default_gemini + available_models
+        st.info("Configure GOOGLE_API_KEY in .env to unlock Gemini models.", icon="💡")
     else:
         st.success("Google API Key loaded.", icon="✅")
         try:
@@ -206,14 +205,13 @@ with col1:
         help="Queries WMI to list programs that run when Windows starts.",
         use_container_width=True,
     ):
-        st.session_state["diagnostic_output"] = "Analyzing startup processes...\n\n"
         with st.spinner("Analyzing startup processes..."):
             result = run_powershell_script("get_startup_processes.ps1")
         if result.startswith("Error:") or result.startswith("Execution Failed:"):
             st.toast("Analysis failed!", icon="❌")
         else:
             st.toast("Analysis complete!", icon="✅")
-        st.session_state["diagnostic_output"] += result
+        st.session_state["diagnostic_output"] = result
 
 with col2:
     if st.button(
@@ -222,9 +220,6 @@ with col2:
         help="Lists network adapters and flushes the DNS resolver cache.",
         use_container_width=True,
     ):
-        st.session_state["diagnostic_output"] = (
-            "Checking network adapters and resetting DNS cache...\n\n"
-        )
         with st.spinner("Checking network & resetting DNS..."):
             result1 = run_powershell_script("get_network_adapters.ps1")
             result2 = run_powershell_script("reset_dns_cache.ps1")
@@ -239,7 +234,7 @@ with col2:
             st.toast("Analysis complete!", icon="✅")
         st.session_state[
             "diagnostic_output"
-        ] += f"--- Network Check ---\n{result1}\n\n--- DNS Reset ---\n{result2}"
+        ] = f"--- Network Check ---\n{result1}\n\n--- DNS Reset ---\n{result2}"
 
 with col3:
     if st.button(
@@ -248,14 +243,13 @@ with col3:
         help="Scans Windows Event Logs for recent critical system errors.",
         use_container_width=True,
     ):
-        st.session_state["diagnostic_output"] = "Scanning recent critical events...\n\n"
         with st.spinner("Scanning critical events..."):
             result = run_powershell_script("get_critical_events.ps1")
         if result.startswith("Error:") or result.startswith("Execution Failed:"):
             st.toast("Analysis failed!", icon="❌")
         else:
             st.toast("Analysis complete!", icon="✅")
-        st.session_state["diagnostic_output"] += result
+        st.session_state["diagnostic_output"] = result
 
 # --- Output Area ---
 st.markdown("#### Diagnostic Output")
