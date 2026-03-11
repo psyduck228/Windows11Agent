@@ -15,7 +15,9 @@ from logging.handlers import RotatingFileHandler
 audit_logger = logging.getLogger("security_audit")
 audit_logger.setLevel(logging.INFO)
 if not audit_logger.handlers:
-    fh = RotatingFileHandler("security_audit.log", maxBytes=5*1024*1024, backupCount=3)
+    fh = RotatingFileHandler(
+        "security_audit.log", maxBytes=5 * 1024 * 1024, backupCount=3
+    )
     fh.setFormatter(
         logging.Formatter("%(asctime)s - %(levelname)s - SECURITY AUDIT - %(message)s")
     )
@@ -318,6 +320,16 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
             messages_for_llm.append({"role": msg["role"], "content": msg["content"]})
 
         with st.chat_message("assistant"):
+            # 🛡️ Sentinel: Enforce strict server-side model validation to prevent arbitrary model execution (Authorization Bypass / SSRF defense)
+            if selected_model not in available_models:
+                audit_logger.warning(
+                    f"Unauthorized model selection bypassed UI: {selected_model}"
+                )
+                st.error(
+                    "Invalid model selected. Please choose a valid model.", icon="❌"
+                )
+                st.stop()
+
             if selected_model.startswith("gemini") and (
                 not api_key or api_key == "your_google_api_key_here"
             ):
