@@ -187,23 +187,3 @@
 2026-03-12 11:34:38,830 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: reset_dns_cache.ps1
 2026-03-12 11:34:38,832 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_critical_events.ps1
 2026-03-12 11:34:38,839 - WARNING - SECURITY AUDIT - Unauthorized model selection bypassed UI: <MagicMock name='mock.selectbox()' id='139810854041360'>
-2026-03-12 21:20:58,131 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
-2026-03-12 21:20:58,133 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
-2026-03-12 21:20:58,134 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_network_adapters.ps1
-2026-03-12 21:20:58,134 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: reset_dns_cache.ps1
-2026-03-12 21:20:58,136 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_critical_events.ps1
-2026-03-12 21:20:58,141 - WARNING - SECURITY AUDIT - Unauthorized model selection bypassed UI: <MagicMock name='mock.selectbox()' id='140340982657872'>
-2026-03-12 21:21:10,132 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../app.py
-2026-03-12 21:21:10,133 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../app.py
-2026-03-12 21:21:10,134 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../../etc/passwd
-2026-03-12 21:21:10,135 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../../etc/passwd
-2026-03-12 21:21:10,136 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ps_scripts/../../app.py
-2026-03-12 21:21:10,136 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ps_scripts/../../app.py
-2026-03-12 21:21:10,138 - INFO - SECURITY AUDIT - Diagnostic script execution requested: /etc/passwd
-2026-03-12 21:21:10,138 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: /etc/passwd
-2026-03-12 21:21:10,140 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../../Windows/System32/drivers/etc/hosts
-2026-03-12 21:21:10,140 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../../Windows/System32/drivers/etc/hosts
-2026-03-12 21:21:10,142 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
-2026-03-12 21:21:10,143 - INFO - SECURITY AUDIT - Successfully executed script: get_startup_processes.ps1
-2026-03-12 21:21:10,144 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../ps_scripts_dangerous/attack.ps1
-2026-03-12 21:21:10,144 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../ps_scripts_dangerous/attack.ps1
