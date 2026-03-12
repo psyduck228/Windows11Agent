@@ -51,3 +51,8 @@
 **Vulnerability:** The application used a frontend `st.selectbox` to constrain the AI model choice but trusted this input directly on the server when passing it to LiteLLM. An attacker manipulating the WebSocket could bypass the UI and supply an arbitrary model string (e.g., `openai/http://malicious.internal/`), leading to Server-Side Request Forgery (SSRF) or unauthorized API consumption.
 **Learning:** UI-level constraints (like dropdowns) are purely cosmetic and do not provide server-side security. Malicious clients can send arbitrary data to backend endpoints.
 **Prevention:** Always enforce strict server-side validation (allowlisting) of all user-controlled inputs, verifying they match the permitted options before processing.
+
+## 2024-03-09 - Environment Variable Leakage to External Processes
+**Vulnerability:** The `subprocess.run` call in `run_powershell_script` inherited the full parent environment, unintentionally exposing the highly sensitive `GOOGLE_API_KEY` to the executed PowerShell scripts.
+**Learning:** External processes inherit the environment of their parent by default. If the parent application loads sensitive secrets (like API keys) into environment variables, any executed script or subprocess will also have access to them, violating the Principle of Least Privilege and posing a severe risk if the subprocess environment is dumped, logged, or compromised.
+**Prevention:** Always explicitly define or sanitize the `env` dictionary passed to `subprocess.run()` (e.g., copying `os.environ` and popping sensitive keys) when executing external commands that do not require those secrets.
