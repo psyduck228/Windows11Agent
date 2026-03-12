@@ -5,3 +5,4 @@ __pycache__/
 .vscode/
 security_audit.log
 streamlit_output.log
+*.log
