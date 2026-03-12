@@ -135,3 +135,55 @@
 2026-03-11 18:51:03,186 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: reset_dns_cache.ps1
 2026-03-11 18:51:03,187 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_critical_events.ps1
 2026-03-11 18:51:03,192 - WARNING - SECURITY AUDIT - Unauthorized model selection bypassed UI: <MagicMock name='mock.selectbox()' id='140706172878672'>
+2026-03-12 11:28:21,593 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-12 11:28:21,609 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-12 11:28:21,611 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_network_adapters.ps1
+2026-03-12 11:28:21,612 - ERROR - SECURITY AUDIT - Unexpected error executing get_network_adapters.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-12 11:28:21,612 - INFO - SECURITY AUDIT - Diagnostic script execution requested: reset_dns_cache.ps1
+2026-03-12 11:28:21,613 - ERROR - SECURITY AUDIT - Unexpected error executing reset_dns_cache.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-12 11:28:21,614 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_critical_events.ps1
+2026-03-12 11:28:21,615 - ERROR - SECURITY AUDIT - Unexpected error executing get_critical_events.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-12 11:28:21,622 - WARNING - SECURITY AUDIT - Unauthorized model selection bypassed UI: <MagicMock name='mock.selectbox()' id='139623919135024'>
+2026-03-12 11:28:21,636 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../app.py
+2026-03-12 11:28:21,636 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../app.py
+2026-03-12 11:28:21,638 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../../etc/passwd
+2026-03-12 11:28:21,638 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../../etc/passwd
+2026-03-12 11:28:21,639 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ps_scripts/../../app.py
+2026-03-12 11:28:21,640 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ps_scripts/../../app.py
+2026-03-12 11:28:21,641 - INFO - SECURITY AUDIT - Diagnostic script execution requested: /etc/passwd
+2026-03-12 11:28:21,641 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: /etc/passwd
+2026-03-12 11:28:21,642 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../../Windows/System32/drivers/etc/hosts
+2026-03-12 11:28:21,642 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../../Windows/System32/drivers/etc/hosts
+2026-03-12 11:28:21,644 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-12 11:28:21,645 - INFO - SECURITY AUDIT - Successfully executed script: get_startup_processes.ps1
+2026-03-12 11:28:21,646 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../ps_scripts_dangerous/attack.ps1
+2026-03-12 11:28:21,646 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../ps_scripts_dangerous/attack.ps1
+2026-03-12 11:34:33,804 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-12 11:34:33,806 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-12 11:34:33,809 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_network_adapters.ps1
+2026-03-12 11:34:33,811 - ERROR - SECURITY AUDIT - Unexpected error executing get_network_adapters.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-12 11:34:33,811 - INFO - SECURITY AUDIT - Diagnostic script execution requested: reset_dns_cache.ps1
+2026-03-12 11:34:33,813 - ERROR - SECURITY AUDIT - Unexpected error executing reset_dns_cache.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-12 11:34:33,815 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_critical_events.ps1
+2026-03-12 11:34:33,816 - ERROR - SECURITY AUDIT - Unexpected error executing get_critical_events.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-12 11:34:33,825 - WARNING - SECURITY AUDIT - Unauthorized model selection bypassed UI: <MagicMock name='mock.selectbox()' id='140398216251968'>
+2026-03-12 11:34:33,832 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../app.py
+2026-03-12 11:34:33,833 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../app.py
+2026-03-12 11:34:33,834 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../../etc/passwd
+2026-03-12 11:34:33,834 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../../etc/passwd
+2026-03-12 11:34:33,836 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ps_scripts/../../app.py
+2026-03-12 11:34:33,836 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ps_scripts/../../app.py
+2026-03-12 11:34:33,837 - INFO - SECURITY AUDIT - Diagnostic script execution requested: /etc/passwd
+2026-03-12 11:34:33,837 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: /etc/passwd
+2026-03-12 11:34:33,838 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../../Windows/System32/drivers/etc/hosts
+2026-03-12 11:34:33,838 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../../Windows/System32/drivers/etc/hosts
+2026-03-12 11:34:33,840 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-12 11:34:33,841 - INFO - SECURITY AUDIT - Successfully executed script: get_startup_processes.ps1
+2026-03-12 11:34:33,842 - INFO - SECURITY AUDIT - Diagnostic script execution requested: ../ps_scripts_dangerous/attack.ps1
+2026-03-12 11:34:33,842 - WARNING - SECURITY AUDIT - Path traversal attempt blocked for script: ../ps_scripts_dangerous/attack.ps1
+2026-03-12 11:34:38,824 - INFO - SECURITY AUDIT - Diagnostic script execution requested: get_startup_processes.ps1
+2026-03-12 11:34:38,827 - ERROR - SECURITY AUDIT - Unexpected error executing get_startup_processes.ps1: [Errno 2] No such file or directory: 'powershell'
+2026-03-12 11:34:38,830 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_network_adapters.ps1
+2026-03-12 11:34:38,830 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: reset_dns_cache.ps1
+2026-03-12 11:34:38,832 - WARNING - SECURITY AUDIT - Rate limit exceeded for script: get_critical_events.ps1
+2026-03-12 11:34:38,839 - WARNING - SECURITY AUDIT - Unauthorized model selection bypassed UI: <MagicMock name='mock.selectbox()' id='139810854041360'>

@@ -106,10 +106,14 @@ def run_powershell_script(script_name: str) -> str:
         ]
 
         # Execute the process
+        # 🛡️ Sentinel: Prevent environment variable leakage to external processes
+        secure_env = os.environ.copy()
+        secure_env.pop("GOOGLE_API_KEY", None)
+
         # 🛡️ Sentinel: Add timeout to prevent long-running scripts
         # from blocking the Streamlit thread
         powershell_result = subprocess.run(
-            args, capture_output=True, text=True, check=False, timeout=30
+            args, capture_output=True, text=True, check=False, timeout=30, env=secure_env
         )
 
         output = powershell_result.stdout
