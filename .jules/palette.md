@@ -10,3 +10,6 @@
 ## 2024-06-05 - Synchronous UI State Clutter
 **Learning:** Pre-populating output state strings (e.g., `st.session_state["output"] = "Analyzing..."`) before blocking calls in Streamlit is a UX anti-pattern because the UI won't redraw until the script finishes. Instead of acting as an intermediate loading state, the text permanently clutters the final rendered output.
 **Action:** Remove manual state string assignments before blocking operations and rely on `st.spinner` for visual feedback. Directly assign the result to the state instead of appending.
+## 2024-06-15 - Destructive Action Confirmation
+**Learning:** Users can easily misclick destructive buttons like "Clear Chat History" leading to immediate, unrecoverable data loss without any friction.
+**Action:** Always place destructive actions behind a confirmation dialog or popover to prevent accidental loss of state.

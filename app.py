@@ -178,7 +178,7 @@ with st.sidebar:
 
     st.divider()
     is_chat_empty = len(st.session_state.get("messages", [])) <= 1
-    if st.button(
+    with st.popover(
         "Clear Chat History",
         icon="🗑️",
         help=(
@@ -189,10 +189,17 @@ with st.sidebar:
         use_container_width=True,
         disabled=is_chat_empty,
     ):
-        st.session_state["messages"] = [
-            {"role": "assistant", "content": WELCOME_MESSAGE}
-        ]
-        st.rerun()
+        st.markdown("Are you sure you want to delete all chat history?")
+        if st.button(
+            "Yes, clear chat",
+            type="primary",
+            use_container_width=True,
+            icon="⚠️",
+        ):
+            st.session_state["messages"] = [
+                {"role": "assistant", "content": WELCOME_MESSAGE}
+            ]
+            st.rerun()
 # --- Header ---
 st.title("Windows 11 Diagnostic AI Agent")
 st.markdown("### Diagnostic Control Panel")
@@ -234,9 +241,9 @@ with col2:
             st.toast("Analysis failed!", icon="❌")
         else:
             st.toast("Analysis complete!", icon="✅")
-        st.session_state[
-            "diagnostic_output"
-        ] = f"--- Network Check ---\n{result1}\n\n--- DNS Reset ---\n{result2}"
+        st.session_state["diagnostic_output"] = (
+            f"--- Network Check ---\n{result1}\n\n--- DNS Reset ---\n{result2}"
+        )
 
 with col3:
     if st.button(
