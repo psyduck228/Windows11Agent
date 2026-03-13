@@ -56,3 +56,13 @@
 **Vulnerability:** The `subprocess.run` call in `run_powershell_script` inherited the full parent environment, unintentionally exposing the highly sensitive `GOOGLE_API_KEY` to the executed PowerShell scripts.
 **Learning:** External processes inherit the environment of their parent by default. If the parent application loads sensitive secrets (like API keys) into environment variables, any executed script or subprocess will also have access to them, violating the Principle of Least Privilege and posing a severe risk if the subprocess environment is dumped, logged, or compromised.
 **Prevention:** Always explicitly define or sanitize the `env` dictionary passed to `subprocess.run()` (e.g., copying `os.environ` and popping sensitive keys) when executing external commands that do not require those secrets.
+
+## 2024-03-13 - Log Injection (CRLF) via External Process Stderr
+**Vulnerability:** The raw `stderr` output from the PowerShell process was being written directly into the security audit log without sanitization. An attacker could potentially craft a payload that outputs newline (`\n`) and carriage return (`\r`) characters to `stderr`, allowing them to inject fake, multiline log entries into `security_audit.log`, confusing forensics or hiding malicious activity.
+**Learning:** External processes output cannot be trusted entirely, even if the execution path is secured. Output variables (especially errors) might contain log injection payloads.
+**Prevention:** Always sanitize or encode data derived from external processes before passing it to a `Logger`. For single-line logs, stripping or replacing newline characters (e.g., `text.replace('\n', ' ')`) prevents CRLF injection.
+
+## 2024-03-13 - UI False Positive Success on Silent Script Failures
+**Vulnerability:** The application executed PowerShell scripts via `subprocess.run` but failed to verify the exit status (`returncode`). If a script failed internally (e.g., a WMI query error) but still generated some text output or completed execution, the Python backend treated it as a success, and the frontend displayed a misleading "Analysis complete! ✅" toast.
+**Learning:** Checking for output content is insufficient to determine process success. Many command line tools or scripts output error details to `stdout` instead of `stderr` or exit cleanly even when failing.
+**Prevention:** Always verify the actual exit code (`returncode == 0` for success) when executing system commands. Explicitly map non-zero exit codes to generic, safe error strings (`"Execution Failed: ..."`) so the UI correctly triggers failure feedback mechanisms.
