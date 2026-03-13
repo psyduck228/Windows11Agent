@@ -49,6 +49,11 @@ WELCOME_MESSAGE = (
     "about the results!"
 )
 
+# 🎨 Palette: Extract duplicated user-facing strings into global constants
+UI_ANALYSIS_FAILED = "Analysis failed!"
+UI_ANALYSIS_COMPLETE = "Analysis complete!"
+UI_REQUIRE_DIAGNOSTIC = "Run a diagnostic tool above first..."
+
 
 @st.cache_data(ttl=3600)
 def get_gemini_models():
@@ -113,7 +118,12 @@ def run_powershell_script(script_name: str) -> str:
         # 🛡️ Sentinel: Add timeout to prevent long-running scripts
         # from blocking the Streamlit thread
         powershell_result = subprocess.run(
-            args, capture_output=True, text=True, check=False, timeout=30, env=secure_env
+            args,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=30,
+            env=secure_env,
         )
 
         output = powershell_result.stdout
@@ -227,9 +237,9 @@ with col1:
         with st.spinner("Analyzing startup processes..."):
             result = run_powershell_script("get_startup_processes.ps1")
         if result.startswith("Error:") or result.startswith("Execution Failed:"):
-            st.toast("Analysis failed!", icon="❌")
+            st.toast(UI_ANALYSIS_FAILED, icon="❌")
         else:
-            st.toast("Analysis complete!", icon="✅")
+            st.toast(UI_ANALYSIS_COMPLETE, icon="✅")
         st.session_state["diagnostic_output"] = result
 
 with col2:
@@ -248,9 +258,9 @@ with col2:
             or result2.startswith("Error:")
             or result2.startswith("Execution Failed:")
         ):
-            st.toast("Analysis failed!", icon="❌")
+            st.toast(UI_ANALYSIS_FAILED, icon="❌")
         else:
-            st.toast("Analysis complete!", icon="✅")
+            st.toast(UI_ANALYSIS_COMPLETE, icon="✅")
         st.session_state["diagnostic_output"] = (
             f"--- Network Check ---\n{result1}\n\n--- DNS Reset ---\n{result2}"
         )
@@ -265,18 +275,22 @@ with col3:
         with st.spinner("Scanning critical events..."):
             result = run_powershell_script("get_critical_events.ps1")
         if result.startswith("Error:") or result.startswith("Execution Failed:"):
-            st.toast("Analysis failed!", icon="❌")
+            st.toast(UI_ANALYSIS_FAILED, icon="❌")
         else:
-            st.toast("Analysis complete!", icon="✅")
+            st.toast(UI_ANALYSIS_COMPLETE, icon="✅")
         st.session_state["diagnostic_output"] = result
 
 # --- Output Area ---
 st.markdown("#### Diagnostic Output")
 with st.container(height=300):
-    if st.session_state["diagnostic_output"]:
-        st.code(st.session_state["diagnostic_output"], language="powershell")
+    output = st.session_state.get("diagnostic_output", "")
+    if output:
+        if "Error:" in output or "Execution Failed:" in output:
+            st.error(output, icon="❌")
+        else:
+            st.code(output, language="powershell")
     else:
-        st.info("Run a diagnostic tool above to view output.", icon="💡")
+        st.info(UI_REQUIRE_DIAGNOSTIC, icon="💡")
 
 st.divider()
 
@@ -293,7 +307,7 @@ for message in st.session_state.messages:
 CHAT_PLACEHOLDER = (
     "Ask a question about the diagnostic results..."
     if st.session_state.get("diagnostic_output")
-    else "Run a diagnostic tool above first..."
+    else UI_REQUIRE_DIAGNOSTIC
 )
 CHAT_DISABLED = not bool(st.session_state.get("diagnostic_output"))
 
