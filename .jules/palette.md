@@ -13,3 +13,7 @@
 ## 2024-06-15 - Destructive Action Confirmation
 **Learning:** Users can easily misclick destructive buttons like "Clear Chat History" leading to immediate, unrecoverable data loss without any friction.
 **Action:** Always place destructive actions behind a confirmation dialog or popover to prevent accidental loss of state.
+
+## $(date +%Y-%m-%d) - Enhance Visibility of Application State Errors
+**Learning:** Rendering diagnostic script failures as default code output (`st.code`) obfuscates the failure state, confusing users who expect a distinct error visualization. Using consistent instructions (like using identical placeholders for different UI components requesting the same action) reduces cognitive load.
+**Action:** Always conditionally render operational failures (e.g., outputs starting with 'Error:' or 'Execution Failed:') using visually distinct error components like `st.error(..., icon="❌")` instead of plain code blocks, and extract repetitive UI strings into global constants for consistent messaging across different components.
