@@ -118,10 +118,16 @@ def run_powershell_script(script_name: str) -> str:
 
         output = powershell_result.stdout
         if powershell_result.stderr:
+            # 🛡️ Sentinel: Prevent Log Injection (CRLF) by sanitizing newlines in stderr
+            sanitized_stderr = powershell_result.stderr.replace("\n", " ").replace("\r", "")
             # 🛡️ Sentinel: Fail securely by logging errors instead of leaking them to the user interface
             audit_logger.error(
-                f"Script {script_name} executed with errors/warnings: {powershell_result.stderr}"
+                f"Script {script_name} executed with errors/warnings: {sanitized_stderr}"
             )
+
+        if powershell_result.returncode != 0:
+            # 🛡️ Sentinel: Explicitly return 'Execution Failed' on non-zero exit code to ensure UI correctly flags failure (False-Positive Success Prevention)
+            return f"Execution Failed: The diagnostic script returned an error code ({powershell_result.returncode})."
 
         audit_logger.info(f"Successfully executed script: {script_name}")
         return output if output.strip() else "Command executed with no output."
