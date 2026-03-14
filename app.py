@@ -129,7 +129,9 @@ def run_powershell_script(script_name: str) -> str:
         output = powershell_result.stdout
         if powershell_result.stderr:
             # 🛡️ Sentinel: Prevent Log Injection (CRLF) by sanitizing newlines in stderr
-            sanitized_stderr = powershell_result.stderr.replace("\n", " ").replace("\r", "")
+            sanitized_stderr = powershell_result.stderr.replace("\n", " ").replace(
+                "\r", ""
+            )
             # 🛡️ Sentinel: Fail securely by logging errors instead of leaking them to the user interface
             audit_logger.error(
                 f"Script {script_name} executed with errors/warnings: {sanitized_stderr}"
@@ -353,8 +355,12 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
         with st.chat_message("assistant"):
             # 🛡️ Sentinel: Enforce strict server-side model validation to prevent arbitrary model execution (Authorization Bypass / SSRF defense)
             if selected_model not in available_models:
+                # 🛡️ Sentinel: Prevent Log Injection (CRLF) by sanitizing newlines
+                sanitized_model = (
+                    str(selected_model).replace("\n", " ").replace("\r", "")
+                )
                 audit_logger.warning(
-                    f"Unauthorized model selection bypassed UI: {selected_model}"
+                    f"Unauthorized model selection bypassed UI: {sanitized_model}"
                 )
                 st.error(
                     "Invalid model selected. Please choose a valid model.", icon="❌"
