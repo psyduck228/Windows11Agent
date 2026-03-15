@@ -66,3 +66,8 @@
 **Vulnerability:** The application executed PowerShell scripts via `subprocess.run` but failed to verify the exit status (`returncode`). If a script failed internally (e.g., a WMI query error) but still generated some text output or completed execution, the Python backend treated it as a success, and the frontend displayed a misleading "Analysis complete! ✅" toast.
 **Learning:** Checking for output content is insufficient to determine process success. Many command line tools or scripts output error details to `stdout` instead of `stderr` or exit cleanly even when failing.
 **Prevention:** Always verify the actual exit code (`returncode == 0` for success) when executing system commands. Explicitly map non-zero exit codes to generic, safe error strings (`"Execution Failed: ..."`) so the UI correctly triggers failure feedback mechanisms.
+## 2026-03-15 - Prevent Log Injection via Input Sanitization
+**Vulnerability:** Untrusted inputs (like script_name and exception strings) were logged directly without explicit string casting and CRLF stripping, enabling Log Injection attacks.
+**Learning:** Even internal arguments or exception objects must be sanitized because an attacker might bypass UI validation or unexpected types might cause AttributeError.
+**Prevention:** Always explicitly cast to string and replace newlines (e.g., str(val).replace('
+', ' ').replace('', '')) before writing to security audit logs.

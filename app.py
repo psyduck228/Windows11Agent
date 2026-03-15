@@ -67,21 +67,26 @@ def get_gemini_models():
 
 def run_powershell_script(script_name: str) -> str:
     """Executes a PowerShell script and returns the output."""
+    # 🛡️ Sentinel: Prevent Log Injection (CRLF) and Type Errors by sanitizing inputs
+    sanitized_script_name = str(script_name).replace("\n", " ").replace("\r", "")
+
     # 🛡️ Sentinel: Implement strict whitelist validation for script execution
     if script_name not in ALLOWED_SCRIPTS:
-        audit_logger.warning(f"Unauthorized script execution attempt: {script_name}")
+        audit_logger.warning(
+            f"Unauthorized script execution attempt: {sanitized_script_name}"
+        )
         return "Error: Unauthorized script execution requested."
 
     # 🛡️ Sentinel: Implement rate limiting to prevent CPU/memory exhaustion via rapid execution
     current_time = time.time()
     last_run = st.session_state.get("last_script_execution", 0)
     if current_time - last_run < 5:
-        audit_logger.warning(f"Rate limit exceeded for script: {script_name}")
+        audit_logger.warning(f"Rate limit exceeded for script: {sanitized_script_name}")
         return "Error: Rate limit exceeded. Please wait 5 seconds before running another diagnostic."
 
     st.session_state["last_script_execution"] = current_time
 
-    audit_logger.info(f"Diagnostic script execution requested: {script_name}")
+    audit_logger.info(f"Diagnostic script execution requested: {sanitized_script_name}")
 
     # 🛡️ Sentinel: Prevent Path Traversal (LFI/RCE)
     script_path = os.path.abspath(os.path.join(SCRIPTS_DIR, script_name))
@@ -91,12 +96,12 @@ def run_powershell_script(script_name: str) -> str:
         base_dir += os.sep
     if not script_path.startswith(base_dir):
         audit_logger.warning(
-            f"Path traversal attempt blocked for script: {script_name}"
+            f"Path traversal attempt blocked for script: {sanitized_script_name}"
         )
         return "Error: Invalid script path requested."
 
     if not os.path.exists(script_path):
-        audit_logger.warning(f"Requested script not found: {script_name}")
+        audit_logger.warning(f"Requested script not found: {sanitized_script_name}")
         return "Error: Script not found."
 
     try:
@@ -134,23 +139,26 @@ def run_powershell_script(script_name: str) -> str:
             )
             # 🛡️ Sentinel: Fail securely by logging errors instead of leaking them to the user interface
             audit_logger.error(
-                f"Script {script_name} executed with errors/warnings: {sanitized_stderr}"
+                f"Script {sanitized_script_name} executed with errors/warnings: {sanitized_stderr}"
             )
 
         if powershell_result.returncode != 0:
             # 🛡️ Sentinel: Explicitly return 'Execution Failed' on non-zero exit code to ensure UI correctly flags failure (False-Positive Success Prevention)
             return f"Execution Failed: The diagnostic script returned an error code ({powershell_result.returncode})."
 
-        audit_logger.info(f"Successfully executed script: {script_name}")
+        audit_logger.info(f"Successfully executed script: {sanitized_script_name}")
         return output if output.strip() else "Command executed with no output."
 
     except subprocess.TimeoutExpired:
         # 🛡️ Sentinel: Fail securely on timeout without leaking system state
-        audit_logger.error(f"Script execution timed out: {script_name}")
+        audit_logger.error(f"Script execution timed out: {sanitized_script_name}")
         return "Execution Failed: The diagnostic script timed out after 30 seconds."
     except (OSError, ValueError) as e:
         # 🛡️ Sentinel: Return a generic error to prevent exposing system details
-        audit_logger.error(f"Unexpected error executing {script_name}: {e}")
+        sanitized_error = str(e).replace("\n", " ").replace("\r", "")
+        audit_logger.error(
+            f"Unexpected error executing {sanitized_script_name}: {sanitized_error}"
+        )
         return (
             "Execution Failed: An unexpected error occurred "
             "while executing the diagnostic script."
@@ -405,7 +413,10 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
 
                 except Exception as e:
                     # 🛡️ Sentinel: Catch all exceptions (Timeout, APIError) to avoid leaking stack traces to the UI.
-                    audit_logger.error(f"LLM API completion error securely caught: {e}")
+                    sanitized_error = str(e).replace("\n", " ").replace("\r", "")
+                    audit_logger.error(
+                        f"LLM API completion error securely caught: {sanitized_error}"
+                    )
                     ERROR_MSG = (
                         "An unexpected error occurred while generating the "
                         "response. Please try again later."
