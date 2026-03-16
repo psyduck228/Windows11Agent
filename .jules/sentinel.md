@@ -71,3 +71,8 @@
 **Learning:** Even internal arguments or exception objects must be sanitized because an attacker might bypass UI validation or unexpected types might cause AttributeError.
 **Prevention:** Always explicitly cast to string and replace newlines (e.g., str(val).replace('
 ', ' ').replace('', '')) before writing to security audit logs.
+
+## 2024-03-16 - Server-Side Input Length Validation (DoS Prevention)
+**Vulnerability:** The chat input length was only validated on the frontend UI using Streamlit's `max_chars` parameter. An attacker could bypass the UI and send oversized inputs directly to the backend.
+**Learning:** Frontend/UI constraints are easily bypassed. Processing unconstrained input size on the server side can lead to API Denial of Wallet (due to excessive tokens) or memory exhaustion (Denial of Service).
+**Prevention:** Always enforce input length limits server-side (e.g., `if len(prompt) > 2000: ...`), explicitly validating the input length before processing and securely logging any violations.
