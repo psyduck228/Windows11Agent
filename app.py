@@ -195,8 +195,11 @@ with st.sidebar:
                 available_models = gemini_models + available_models
             else:
                 available_models = default_gemini + available_models
-        except Exception:
+        except Exception as e:
             # 🛡️ Sentinel: Catch all exceptions to prevent leaking API errors/stack traces
+            # and securely log the swallowed exception for audit purposes
+            sanitized_error = str(e).replace("\n", " ").replace("\r", "")
+            audit_logger.error(f"Failed to fetch Gemini models securely: {sanitized_error}")
             available_models = default_gemini + available_models
 
     selected_model = st.selectbox(
@@ -322,6 +325,13 @@ CHAT_PLACEHOLDER = (
 CHAT_DISABLED = not bool(st.session_state.get("diagnostic_output"))
 
 if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISABLED):
+    # 🛡️ Sentinel: Enforce server-side max input length validation to prevent UI bypass DoS
+    if len(prompt) > 2000:
+        sanitized_prompt = prompt[:50].replace("\n", " ").replace("\r", "")
+        audit_logger.warning(f"Oversized input detected and blocked (length: {len(prompt)}): {sanitized_prompt}...")
+        st.error("Error: Input exceeds the maximum allowed length of 2000 characters.", icon="❌")
+        st.stop()
+
     # 🛡️ Sentinel: Implement rate limiting to prevent API abuse and DoS via rapid requests
     current_time = time.time()
     last_chat = st.session_state.get("last_chat_time", 0)
