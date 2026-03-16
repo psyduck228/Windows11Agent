@@ -243,6 +243,7 @@ with col1:
         icon="🚀",
         help="Queries WMI to list programs that run when Windows starts.",
         use_container_width=True,
+        shortcut="Shift+1",
     ):
         with st.spinner("Analyzing startup processes..."):
             result = run_powershell_script("get_startup_processes.ps1")
@@ -258,6 +259,7 @@ with col2:
         icon="🌐",
         help="Lists network adapters and flushes the DNS resolver cache.",
         use_container_width=True,
+        shortcut="Shift+2",
     ):
         with st.spinner("Checking network & resetting DNS..."):
             result1 = run_powershell_script("get_network_adapters.ps1")
@@ -281,6 +283,7 @@ with col3:
         icon="⚠️",
         help="Scans Windows Event Logs for recent critical system errors.",
         use_container_width=True,
+        shortcut="Shift+3",
     ):
         with st.spinner("Scanning critical events..."):
             result = run_powershell_script("get_critical_events.ps1")

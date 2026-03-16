@@ -14,6 +14,10 @@
 **Learning:** Users can easily misclick destructive buttons like "Clear Chat History" leading to immediate, unrecoverable data loss without any friction.
 **Action:** Always place destructive actions behind a confirmation dialog or popover to prevent accidental loss of state.
 
-## $(date +%Y-%m-%d) - Enhance Visibility of Application State Errors
+## 2024-06-25 - Enhance Visibility of Application State Errors
 **Learning:** Rendering diagnostic script failures as default code output (`st.code`) obfuscates the failure state, confusing users who expect a distinct error visualization. Using consistent instructions (like using identical placeholders for different UI components requesting the same action) reduces cognitive load.
 **Action:** Always conditionally render operational failures (e.g., outputs starting with 'Error:' or 'Execution Failed:') using visually distinct error components like `st.error(..., icon="❌")` instead of plain code blocks, and extract repetitive UI strings into global constants for consistent messaging across different components.
+
+## 2024-06-25 - Keyboard Accessibility and Power User Shortcuts
+**Learning:** Frequent actions like triggering main diagnostic tools benefit significantly from keyboard shortcuts, which drastically improves accessibility for users reliant on keyboard navigation and enhances UX for power users.
+**Action:** Use Streamlit's `shortcut` parameter on frequent or primary `st.button`s to provide keyboard accessibility hints (e.g., `shortcut="Shift+1"`).
