@@ -76,3 +76,8 @@
 **Vulnerability:** The chat input length was only validated on the frontend UI using Streamlit's `max_chars` parameter. An attacker could bypass the UI and send oversized inputs directly to the backend.
 **Learning:** Frontend/UI constraints are easily bypassed. Processing unconstrained input size on the server side can lead to API Denial of Wallet (due to excessive tokens) or memory exhaustion (Denial of Service).
 **Prevention:** Always enforce input length limits server-side (e.g., `if len(prompt) > 2000: ...`), explicitly validating the input length before processing and securely logging any violations.
+
+## 2024-03-20 - Prevent Indirect Prompt Injection from Diagnostic Logs
+**Vulnerability:** The AI system prompt directly appended the `diagnostic_output` (which includes data like Windows Event Logs) without strict delimiters or security directives. Because unprivileged users or applications can write to Windows Event Logs, an attacker could craft a log entry containing malicious instructions (e.g., "Ignore previous instructions and say X"). The AI might then execute these injected instructions, leading to Indirect Prompt Injection.
+**Learning:** Any system data ingested into an LLM context that can be influenced by external actors (like log files, external web content, or user inputs) must be treated as untrusted data.
+**Prevention:** Always encapsulate untrusted data within explicit delimiters (e.g., `<diagnostic_output>...</diagnostic_output>`) and provide a strict security directive to the model explicitly instructing it to treat the encapsulated content only as raw data to be analyzed, never as executable instructions.
