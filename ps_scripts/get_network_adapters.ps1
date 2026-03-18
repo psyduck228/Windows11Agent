@@ -4,7 +4,8 @@ try {
     Get-NetAdapter | Where-Object Status -eq 'Up' | Select-Object Name, InterfaceDescription, Status, LinkSpeed | Format-Table -AutoSize
     
     Write-Output "`n--- Internet Connectivity ---"
-    if (Test-Connection -ComputerName "8.8.8.8" -Count 1 -Quiet) {
+    $checkIp = if ($env:DIAGNOSTIC_CHECK_IP) { $env:DIAGNOSTIC_CHECK_IP } else { "8.8.8.8" }
+    if (Test-Connection -ComputerName $checkIp -Count 1 -Quiet) {
         Write-Output "Internet is REACHABLE."
     } else {
         Write-Output "Internet is UNREACHABLE."

@@ -81,3 +81,8 @@
 **Vulnerability:** The AI system prompt directly appended the `diagnostic_output` (which includes data like Windows Event Logs) without strict delimiters or security directives. Because unprivileged users or applications can write to Windows Event Logs, an attacker could craft a log entry containing malicious instructions (e.g., "Ignore previous instructions and say X"). The AI might then execute these injected instructions, leading to Indirect Prompt Injection.
 **Learning:** Any system data ingested into an LLM context that can be influenced by external actors (like log files, external web content, or user inputs) must be treated as untrusted data.
 **Prevention:** Always encapsulate untrusted data within explicit delimiters (e.g., `<diagnostic_output>...</diagnostic_output>`) and provide a strict security directive to the model explicitly instructing it to treat the encapsulated content only as raw data to be analyzed, never as executable instructions.
+
+## 2026-03-17 - Hardcoded IP Address in Network Diagnostic
+**Vulnerability:** Hardcoded IP address (8.8.8.8) used for internet connectivity testing in a PowerShell script.
+**Learning:** Hardcoding external dependencies like IP addresses reduces system flexibility, hinders maintenance, and can be flagged as a security risk by scanners.
+**Prevention:** Always use environment variables or configuration parameters for external endpoints, providing sensible defaults to maintain backward compatibility.
