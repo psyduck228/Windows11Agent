@@ -55,6 +55,11 @@ UI_ANALYSIS_COMPLETE = "Analysis complete!"
 UI_REQUIRE_DIAGNOSTIC = "Run a diagnostic tool above first..."
 
 
+def sanitize_log_input(text) -> str:
+    """🛡️ Sentinel: Prevent Log Injection (CRLF) and Type Errors by sanitizing inputs."""
+    return str(text).replace("\n", " ").replace("\r", "")
+
+
 @st.cache_data(ttl=3600)
 def get_gemini_models():
     """Fetches available Gemini models from the Google Generative AI API."""
@@ -68,7 +73,7 @@ def get_gemini_models():
 def run_powershell_script(script_name: str) -> str:
     """Executes a PowerShell script and returns the output."""
     # 🛡️ Sentinel: Prevent Log Injection (CRLF) and Type Errors by sanitizing inputs
-    sanitized_script_name = str(script_name).replace("\n", " ").replace("\r", "")
+    sanitized_script_name = sanitize_log_input(script_name)
 
     # 🛡️ Sentinel: Implement strict whitelist validation for script execution
     if script_name not in ALLOWED_SCRIPTS:
@@ -134,9 +139,7 @@ def run_powershell_script(script_name: str) -> str:
         output = powershell_result.stdout
         if powershell_result.stderr:
             # 🛡️ Sentinel: Prevent Log Injection (CRLF) by sanitizing newlines in stderr
-            sanitized_stderr = powershell_result.stderr.replace("\n", " ").replace(
-                "\r", ""
-            )
+            sanitized_stderr = sanitize_log_input(powershell_result.stderr)
             # 🛡️ Sentinel: Fail securely by logging errors instead of leaking them to the user interface
             audit_logger.error(
                 f"Script {sanitized_script_name} executed with errors/warnings: {sanitized_stderr}"
@@ -155,7 +158,7 @@ def run_powershell_script(script_name: str) -> str:
         return "Execution Failed: The diagnostic script timed out after 30 seconds."
     except (OSError, ValueError) as e:
         # 🛡️ Sentinel: Return a generic error to prevent exposing system details
-        sanitized_error = str(e).replace("\n", " ").replace("\r", "")
+        sanitized_error = sanitize_log_input(e)
         audit_logger.error(
             f"Unexpected error executing {sanitized_script_name}: {sanitized_error}"
         )
@@ -198,7 +201,7 @@ with st.sidebar:
         except Exception as e:
             # 🛡️ Sentinel: Catch all exceptions to prevent leaking API errors/stack traces
             # and securely log the swallowed exception for audit purposes
-            sanitized_error = str(e).replace("\n", " ").replace("\r", "")
+            sanitized_error = sanitize_log_input(e)
             audit_logger.error(
                 f"Failed to fetch Gemini models securely: {sanitized_error}"
             )
@@ -332,7 +335,7 @@ CHAT_DISABLED = not bool(st.session_state.get("diagnostic_output"))
 if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISABLED):
     # 🛡️ Sentinel: Enforce server-side max input length validation to prevent UI bypass DoS
     if len(prompt) > 2000:
-        sanitized_prompt = prompt[:50].replace("\n", " ").replace("\r", "")
+        sanitized_prompt = sanitize_log_input(prompt[:50])
         audit_logger.warning(
             f"Oversized input detected and blocked (length: {len(prompt)}): {sanitized_prompt}..."
         )
@@ -392,9 +395,7 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
             # 🛡️ Sentinel: Enforce strict server-side model validation to prevent arbitrary model execution (Authorization Bypass / SSRF defense)
             if selected_model not in available_models:
                 # 🛡️ Sentinel: Prevent Log Injection (CRLF) by sanitizing newlines
-                sanitized_model = (
-                    str(selected_model).replace("\n", " ").replace("\r", "")
-                )
+                sanitized_model = sanitize_log_input(selected_model)
                 audit_logger.warning(
                     f"Unauthorized model selection bypassed UI: {sanitized_model}"
                 )
@@ -441,7 +442,7 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
 
                 except Exception as e:
                     # 🛡️ Sentinel: Catch all exceptions (Timeout, APIError) to avoid leaking stack traces to the UI.
-                    sanitized_error = str(e).replace("\n", " ").replace("\r", "")
+                    sanitized_error = sanitize_log_input(e)
                     audit_logger.error(
                         f"LLM API completion error securely caught: {sanitized_error}"
                     )
