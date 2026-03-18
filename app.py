@@ -204,6 +204,9 @@ with st.sidebar:
             )
             available_models = default_gemini + available_models
 
+    # ⚡ Performance: Use a set for O(1) membership testing if available_models is large
+    available_models_set = set(available_models)
+
     selected_model = st.selectbox(
         "Select Model",
         available_models,
@@ -390,7 +393,8 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
 
         with st.chat_message("assistant"):
             # 🛡️ Sentinel: Enforce strict server-side model validation to prevent arbitrary model execution (Authorization Bypass / SSRF defense)
-            if selected_model not in available_models:
+            # ⚡ Performance: Use a set for faster O(1) membership checking
+            if selected_model not in available_models_set:
                 # 🛡️ Sentinel: Prevent Log Injection (CRLF) by sanitizing newlines
                 sanitized_model = (
                     str(selected_model).replace("\n", " ").replace("\r", "")
