@@ -86,3 +86,8 @@
 **Vulnerability:** Hardcoded IP address (8.8.8.8) used for internet connectivity testing in a PowerShell script.
 **Learning:** Hardcoding external dependencies like IP addresses reduces system flexibility, hinders maintenance, and can be flagged as a security risk by scanners.
 **Prevention:** Always use environment variables or configuration parameters for external endpoints, providing sensible defaults to maintain backward compatibility.
+
+## 2026-03-18 - Indirect Prompt Injection via XML Tag Breakout
+**Vulnerability:** The application used XML delimiters (`<diagnostic_output>`) to encapsulate untrusted diagnostic data (like Windows Event Logs) to prevent Indirect Prompt Injection. However, the untrusted data itself was not sanitized for these delimiters.
+**Learning:** If an attacker inserts the closing tag (`</diagnostic_output>`) into the untrusted data (e.g., via a malicious Event Log entry), they can prematurely close the data context. Any text following the injected closing tag might then be interpreted by the LLM as part of the core system prompt/instructions, defeating the delimiter defense.
+**Prevention:** When using delimiters to isolate untrusted data in an LLM prompt, always sanitize the untrusted payload by escaping, encoding, or stripping the delimiter tags (e.g., `.replace("</diagnostic_output>", "_/diagnostic_output_")`) before appending it to the prompt.
