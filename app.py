@@ -379,9 +379,11 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
         if st.session_state["diagnostic_output"]:
             # 🛡️ Sentinel: Sanitize the diagnostic output to prevent XML Tag Breakout
             # If an attacker includes </diagnostic_output> in the Event Logs, they could escape the data context.
-            safe_diagnostic_output = st.session_state["diagnostic_output"].replace(
-                "<diagnostic_output>", "_diagnostic_output_"
-            ).replace("</diagnostic_output>", "_/diagnostic_output_")
+            safe_diagnostic_output = (
+                st.session_state["diagnostic_output"]
+                .replace("<diagnostic_output>", "_diagnostic_output_")
+                .replace("</diagnostic_output>", "_/diagnostic_output_")
+            )
             system_instruction += (
                 "\n\n### CURRENT DIAGNOSTIC OUTPUT ###\n"
                 "<diagnostic_output>\n"
@@ -428,12 +430,14 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
                 try:
                     # Call litellm completion
                     # 🛡️ Sentinel: Add timeout to prevent API hangs from blocking Streamlit threads
-                    response = completion(
-                        model=selected_model,
-                        messages=messages_for_llm,
-                        stream=True,
-                        timeout=30,
-                    )
+                    # 🎨 Palette: Add immediate visual feedback during network latency delay before stream starts
+                    with st.spinner("Thinking..."):
+                        response = completion(
+                            model=selected_model,
+                            messages=messages_for_llm,
+                            stream=True,
+                            timeout=30,
+                        )
 
                     # Stream the response
                     def generate():
