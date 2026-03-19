@@ -123,7 +123,15 @@ def run_powershell_script(script_name: str) -> str:
         # Execute the process
         # 🛡️ Sentinel: Prevent environment variable leakage to external processes
         secure_env = os.environ.copy()
-        secure_env.pop("GOOGLE_API_KEY", None)
+        # Dynamically scrub sensitive environment variables
+        sensitive_keywords = ["API_KEY", "SECRET", "TOKEN", "PASSWORD", "CREDENTIAL"]
+        keys_to_remove = [
+            k
+            for k in secure_env.keys()
+            if any(keyword in k.upper() for keyword in sensitive_keywords)
+        ]
+        for k in keys_to_remove:
+            secure_env.pop(k, None)
 
         # 🛡️ Sentinel: Add timeout to prevent long-running scripts
         # from blocking the Streamlit thread
@@ -379,9 +387,11 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
         if st.session_state["diagnostic_output"]:
             # 🛡️ Sentinel: Sanitize the diagnostic output to prevent XML Tag Breakout
             # If an attacker includes </diagnostic_output> in the Event Logs, they could escape the data context.
-            safe_diagnostic_output = st.session_state["diagnostic_output"].replace(
-                "<diagnostic_output>", "_diagnostic_output_"
-            ).replace("</diagnostic_output>", "_/diagnostic_output_")
+            safe_diagnostic_output = (
+                st.session_state["diagnostic_output"]
+                .replace("<diagnostic_output>", "_diagnostic_output_")
+                .replace("</diagnostic_output>", "_/diagnostic_output_")
+            )
             system_instruction += (
                 "\n\n### CURRENT DIAGNOSTIC OUTPUT ###\n"
                 "<diagnostic_output>\n"
