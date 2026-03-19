@@ -123,7 +123,15 @@ def run_powershell_script(script_name: str) -> str:
         # Execute the process
         # 🛡️ Sentinel: Prevent environment variable leakage to external processes
         secure_env = os.environ.copy()
-        secure_env.pop("GOOGLE_API_KEY", None)
+        # Dynamically scrub sensitive environment variables
+        sensitive_keywords = ["API_KEY", "SECRET", "TOKEN", "PASSWORD", "CREDENTIAL"]
+        keys_to_remove = [
+            k
+            for k in secure_env.keys()
+            if any(keyword in k.upper() for keyword in sensitive_keywords)
+        ]
+        for k in keys_to_remove:
+            secure_env.pop(k, None)
 
         # 🛡️ Sentinel: Add timeout to prevent long-running scripts
         # from blocking the Streamlit thread
