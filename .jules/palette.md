@@ -21,3 +21,7 @@
 ## 2024-06-25 - Keyboard Accessibility and Power User Shortcuts
 **Learning:** Frequent actions like triggering main diagnostic tools benefit significantly from keyboard shortcuts, which drastically improves accessibility for users reliant on keyboard navigation and enhances UX for power users.
 **Action:** Use Streamlit's `shortcut` parameter on frequent or primary `st.button`s to provide keyboard accessibility hints (e.g., `shortcut="Shift+1"`).
+
+## 2024-07-10 - Streaming Chat Loading States
+**Learning:** In streaming chat interfaces, there's often a network latency delay before the first token arrives. Without a visual indicator (like a spinner) inside the chat bubble, users may think the application missed their input or is frozen while waiting for the stream to initiate.
+**Action:** Always wrap the synchronous API call that initiates the stream in a `with st.spinner()` context block within the chat message to provide immediate visual feedback before the streaming content begins.
