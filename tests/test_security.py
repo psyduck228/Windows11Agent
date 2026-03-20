@@ -117,3 +117,18 @@ def test_run_powershell_script_environment_scrubbing():
         assert "DB_PASSWORD" not in called_env
         assert "USER_CREDENTIALS" not in called_env
         assert "SOME_API_KEY_HERE" not in called_env
+
+
+def test_sanitize_diagnostic_output_case_insensitive():
+    """Test that XML tag breakout sanitization is case-insensitive."""
+    test_cases = [
+        ("<diagnostic_output>", "_diagnostic_output_"),
+        ("</diagnostic_output>", "_/diagnostic_output_"),
+        ("<DiAgNoStIc_OuTpUt>", "_diagnostic_output_"),
+        ("</DIAGNOSTIC_OUTPUT>", "_/diagnostic_output_"),
+        ("some <diagnostic_output> text", "some _diagnostic_output_ text"),
+        ("text </DiAgNoStIc_OuTpUt> more", "text _/diagnostic_output_ more"),
+        ("clean text", "clean text"),
+    ]
+    for input_text, expected_text in test_cases:
+        assert app.sanitize_diagnostic_output(input_text) == expected_text

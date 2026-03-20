@@ -3,6 +3,7 @@
 import os
 import subprocess
 import time
+import re
 import streamlit as st  # type: ignore
 import google.generativeai as genai  # type: ignore
 from litellm import completion  # type: ignore
@@ -58,6 +59,13 @@ UI_REQUIRE_DIAGNOSTIC = "Run a diagnostic tool above first..."
 def sanitize_log_input(text) -> str:
     """🛡️ Sentinel: Prevent Log Injection (CRLF) and Type Errors by sanitizing inputs."""
     return str(text).replace("\n", " ").replace("\r", "")
+
+
+def sanitize_diagnostic_output(text: str) -> str:
+    """🛡️ Sentinel: Sanitize diagnostic output to prevent XML Tag Breakout."""
+    if not isinstance(text, str):
+        text = str(text)
+    return re.sub(r'(?i)<(/?)diagnostic_output>', r'_\1diagnostic_output_', text)
 
 
 @st.cache_data(ttl=3600)
@@ -387,10 +395,8 @@ if prompt := st.chat_input(CHAT_PLACEHOLDER, max_chars=2000, disabled=CHAT_DISAB
         if st.session_state["diagnostic_output"]:
             # 🛡️ Sentinel: Sanitize the diagnostic output to prevent XML Tag Breakout
             # If an attacker includes </diagnostic_output> in the Event Logs, they could escape the data context.
-            safe_diagnostic_output = (
+            safe_diagnostic_output = sanitize_diagnostic_output(
                 st.session_state["diagnostic_output"]
-                .replace("<diagnostic_output>", "_diagnostic_output_")
-                .replace("</diagnostic_output>", "_/diagnostic_output_")
             )
             system_instruction += (
                 "\n\n### CURRENT DIAGNOSTIC OUTPUT ###\n"
