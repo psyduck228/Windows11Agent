@@ -65,7 +65,7 @@ def sanitize_diagnostic_output(text: str) -> str:
     """🛡️ Sentinel: Sanitize diagnostic output to prevent XML Tag Breakout."""
     if not isinstance(text, str):
         text = str(text)
-    return re.sub(r'(?i)<(/?)diagnostic_output>', r'_\1diagnostic_output_', text)
+    return re.sub(r"(?i)<(/?)diagnostic_output[^>]*>", r"_\1diagnostic_output_", text)
 
 
 @st.cache_data(ttl=3600)
