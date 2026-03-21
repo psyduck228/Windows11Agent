@@ -65,7 +65,7 @@ def sanitize_diagnostic_output(text: str) -> str:
     """🛡️ Sentinel: Sanitize diagnostic output to prevent XML Tag Breakout."""
     if not isinstance(text, str):
         text = str(text)
-    return re.sub(r'(?i)<(/?)diagnostic_output>', r'_\1diagnostic_output_', text)
+    return re.sub(r"(?i)<(/?)diagnostic_output>", r"_\1diagnostic_output_", text)
 
 
 @st.cache_data(ttl=3600)
@@ -195,7 +195,7 @@ if "messages" not in st.session_state:
 
 # --- Sidebar ---
 with st.sidebar:
-    st.markdown("### AI Configuration")
+    st.markdown("## AI Configuration")
 
     available_models = ["ollama/deepseek-r1"]
     default_gemini = [
@@ -259,7 +259,7 @@ with st.sidebar:
             st.rerun()
 # --- Header ---
 st.title("Windows 11 Diagnostic AI Agent")
-st.markdown("### Diagnostic Control Panel")
+st.markdown("## Diagnostic Control Panel")
 
 # --- Controls ---
 col1, col2, col3 = st.columns(3)
@@ -321,7 +321,7 @@ with col3:
         st.session_state["diagnostic_output"] = result
 
 # --- Output Area ---
-st.markdown("#### Diagnostic Output")
+st.markdown("### Diagnostic Output")
 with st.container(height=300):
     output = st.session_state.get("diagnostic_output", "")
     if output:
@@ -335,7 +335,7 @@ with st.container(height=300):
 st.divider()
 
 # --- Chat Interface ---
-st.markdown("### Ask about these diagnostics")
+st.markdown("## Ask about these diagnostics")
 
 # Display chat history
 for message in st.session_state.messages:

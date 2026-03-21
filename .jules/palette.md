@@ -25,3 +25,7 @@
 ## 2024-07-10 - Streaming Chat Loading States
 **Learning:** In streaming chat interfaces, there's often a network latency delay before the first token arrives. Without a visual indicator (like a spinner) inside the chat bubble, users may think the application missed their input or is frozen while waiting for the stream to initiate.
 **Action:** Always wrap the synchronous API call that initiates the stream in a `with st.spinner()` context block within the chat message to provide immediate visual feedback before the streaming content begins.
+
+## 2025-03-21 - Semantic Heading Structure
+**Learning:** Skipping heading levels (e.g., jumping from H1 to H3) in Streamlit apps using `st.markdown("### ...")` breaks the logical document outline, creating an accessibility failure for screen reader users who rely on headings for navigation.
+**Action:** Always maintain a strict, hierarchical heading order (H1 -> H2 -> H3) by using the appropriate number of `#` in markdown or the semantic `st.header`/`st.subheader` components.
