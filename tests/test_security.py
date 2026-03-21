@@ -129,6 +129,11 @@ def test_sanitize_diagnostic_output_case_insensitive():
         ("some <diagnostic_output> text", "some _diagnostic_output_ text"),
         ("text </DiAgNoStIc_OuTpUt> more", "text _/diagnostic_output_ more"),
         ("clean text", "clean text"),
+        ("<diagnostic_output >", "_diagnostic_output_"),
+        ("</diagnostic_output >", "_/diagnostic_output_"),
+        ("<diagnostic_output \n>", "_diagnostic_output_"),
+        ("<diagnostic_output id='1'>", "_diagnostic_output_"),
+        ('</diagnostic_output class="test">', "_/diagnostic_output_"),
     ]
     for input_text, expected_text in test_cases:
         assert app.sanitize_diagnostic_output(input_text) == expected_text
